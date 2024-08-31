@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70912c5f3aaa38245bff7c6bdc1659b2, type: 3}
+  m_Name: BiomeAttributes
+  m_EditorClassIdentifier: 
+  biomeName: 
+  scale: 20
+  octaves: 4
+  persistence: 0.5
+  lacunarity: 2
+  surfaceType: 6
+  depthBlock: 2
+  surfaceDepth: 3
+  nomalType: 1
+  nomalHeight: 20
+  surfaceHeight: 5
+  offsetHeight: 0
+  scaleHeight: 0.5
+  cave: 0
+  treePlacements:
+  - probability: 0
+    scaleTree: 8
+    offsetTree: 0
+    woodType: 7
+    treeZoneScale: 0
+    treeZoneThreshold: 0
+    leaves: 1
+    leavesType: 8
+    groundType: 6
+    minHeight: 5
+    maxHeight: 8
+  undergrounds: []
