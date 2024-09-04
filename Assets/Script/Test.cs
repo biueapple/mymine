@@ -5,10 +5,12 @@ using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-    public Player player;
-    public Scarecrow scarecrow;
 
+    public GameObject cube1;
 
+    public GameObject cube2;
+
+    public GameObject cube3;
 
     void Start()
     {
@@ -16,6 +18,33 @@ public class Test : MonoBehaviour
 
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(scarecrow.STAT, 10, 1));
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(player.STAT, 10, 1));
+
+        List<(Vector3Int, int)> dir = new()
+        {
+            (new Vector3Int(1, 0, 0), 4),
+            (new Vector3Int(-1, 0, 0), 4),
+            (new Vector3Int(0, 0, 1), 4),
+            (new Vector3Int(0, 0, -1), 4),
+            (new Vector3Int(0, -1, 0), 8),
+            (new Vector3Int(0, 1, 0), 1)
+        };
+        Worm worm = Worm_Algorithm.Instance.Start(new Vector3Int(0, 0, 0), dir);
+
+        for (int i = 0; i < worm.pathRange.Count; i++)
+        {
+            if (!worm.path.Contains(worm.pathRange[i]))
+                Instantiate(cube1, worm.pathRange[i], Quaternion.identity);
+        }
+
+        for (int i = 0; i < worm.path.Count; i++)
+        {
+            Instantiate(cube2, worm.path[i], Quaternion.identity);
+        }
+
+        for (int i = 0; i < worm.wall.Count; i++)
+        {
+            Instantiate(cube3, worm.wall[i], Quaternion.identity);
+        }
     }
 
     void Update()
