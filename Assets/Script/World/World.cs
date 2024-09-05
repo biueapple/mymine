@@ -61,14 +61,6 @@ public class World : MonoBehaviour
     private Coroutine sensing;
     private void Start()
     {
-        //Vector3Int index = GetChunkIndex(GameManager.Instance.Players[0].transform.position);
-        //var list = GetChunkRangeIfCreate(index, 2);
-        //list.ForEach(x => x.Biome.CreateTreeMap(x));
-        //list.ForEach(x => x.Draw());
-        //list.ForEach(x => x.Active());
-        //activeChunks.AddRange(list);
-        //GameManager.Instance.Players.ToList().ForEach(x => x.transform.position = new Vector3(transform.position.x, Height((int)transform.position.x, (int)transform.position.z) + 3, transform.position.z));
-        //sensing = StartCoroutine(PlayerSensing());
         StartCoroutine(CreateWorld());
     }
 
@@ -78,7 +70,9 @@ public class World : MonoBehaviour
         var list = GetChunkRangeIfCreate(index, 2);
         for(int i = 0; i < list.Count; i++)
         {
+            list[i].Biome.CreateUnderground(list[i]);
             list[i].Biome.CreateTreeMap(list[i]);
+            list[i].Biome.CreateCave(list[i]);
             list[i].Draw();
             list[i].Active();
             yield return null;
@@ -183,7 +177,7 @@ public class World : MonoBehaviour
         }
 
         //청크 바깥 없는 존재 불투명 (그리지 않음)
-        return false;
+        return true;
     }
 
     public bool WorldBlockPositionSolid(Vector3 position)
@@ -237,7 +231,7 @@ public class World : MonoBehaviour
             Vector3Int Chunkposition = position - chunk.Position;
 
             //그 위치에 무슨 블록이 있는지
-            int index = chunk.EditBlock(Chunkposition, 0);
+            int index = chunk.EditBlock(Chunkposition, 0, true);
             if (index > 0)
             {
                 //그 블록이 드랍하는 아이템 id는 무엇인지
@@ -281,7 +275,7 @@ public class World : MonoBehaviour
             Vector3Int Chunkposition = position - chunk.Position;
 
             //그 위치에 무슨 블록이 있는지
-            chunk.EditBlock(Chunkposition, id);
+            chunk.EditBlock(Chunkposition, id, true);
 
             //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
             for(int i = 0; i < BlockInfo.faceChecks.Length; i++)
@@ -317,21 +311,7 @@ public class World : MonoBehaviour
                 Vector3Int Chunkposition = blockOrders[i].world - chunk.Position;
 
                 //그 위치에 무슨 블록이 있는지
-                chunk.EditBlock(Chunkposition, blockOrders[i].type);
-
-                //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
-                for (int j = 0; j < BlockInfo.faceChecks.Length; j++)
-                {
-                    //위치 + 모든면의 위치값이 다른청크가 나올경우
-                    if (chunks.TryGetValue(GetChunkIndex(blockOrders[i].world + BlockInfo.faceChecks[j]), out Chunk ex))
-                    {
-                        //그 청크또한 다시 그려야 함
-                        if (!(chunk.Position == ex.Position))
-                        {
-                            ex.Draw();
-                        }
-                    }
-                }
+                chunk.EditBlock(Chunkposition, blockOrders[i].type, false);
             }
         }
     }

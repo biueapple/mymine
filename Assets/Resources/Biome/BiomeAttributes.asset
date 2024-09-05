@@ -38,4 +38,11 @@ MonoBehaviour:
     groundType: 6
     minHeight: 5
     maxHeight: 8
-  undergrounds: []
+  undergrounds:
+  - type: 2
+    probability: 0.4
+    minHeight: 2
+    maxHeight: 30
+    depth: 5
+    offset: 0
+    scale: 8

@@ -12,6 +12,29 @@ public class Test : MonoBehaviour
 
     public GameObject cube3;
 
+    public GameObject cube4;
+
+    Vector3Int[] plus = new Vector3Int[7]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(-1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(0,-1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(0,0,-1)
+    };
+
+    Vector3Int[] chair = new Vector3Int[6]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(1,1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(1,0,1)
+    };
+
     void Start()
     {
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(scarecrow.STAT, 10, 10));
@@ -19,32 +42,43 @@ public class Test : MonoBehaviour
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(scarecrow.STAT, 10, 1));
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(player.STAT, 10, 1));
 
-        List<(Vector3Int, int)> dir = new()
-        {
-            (new Vector3Int(1, 0, 0), 4),
-            (new Vector3Int(-1, 0, 0), 4),
-            (new Vector3Int(0, 0, 1), 4),
-            (new Vector3Int(0, 0, -1), 4),
-            (new Vector3Int(0, -1, 0), 8),
-            (new Vector3Int(0, 1, 0), 1)
-        };
-        Worm worm = Worm_Algorithm.Instance.Start(new Vector3Int(0, 0, 0), dir);
+        //List<(Vector3Int, int)> dir = new()
+        //{
+        //    (new Vector3Int(1, 0, 0), 6),
+        //    (new Vector3Int(-1, 0, 0), 6),
+        //    (new Vector3Int(0, 0, 1), 6),
+        //    (new Vector3Int(0, 0, -1), 6),
+        //    (new Vector3Int(0, -1, 0), 8),
+        //    (new Vector3Int(0, 1, 0), 1)
+        //};
+        //Worm worm = Worm_Algorithm.Instance.Start(new Vector3Int(0, 0, 0), dir);
 
-        for (int i = 0; i < worm.pathRange.Count; i++)
-        {
-            if (!worm.path.Contains(worm.pathRange[i]))
-                Instantiate(cube1, worm.pathRange[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.pathRange.Count; i++)
+        //{
+        //    if (!worm.path.Contains(worm.pathRange[i]))
+        //        Instantiate(cube1, worm.pathRange[i], Quaternion.identity);
+        //}
 
-        for (int i = 0; i < worm.path.Count; i++)
-        {
-            Instantiate(cube2, worm.path[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.path.Count; i++)
+        //{
+        //    Instantiate(cube2, worm.path[i], Quaternion.identity);
+        //}
 
-        for (int i = 0; i < worm.wall.Count; i++)
-        {
-            Instantiate(cube3, worm.wall[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.wall.Count; i++)
+        //{
+        //    float f = Random.Range(0, 1.0f);
+        //    Debug.Log(f);
+        //    if (f > 0.8f)
+        //    {
+        //        Instantiate(cube4, worm.wall[i], Quaternion.identity);
+        //    }
+        //    else
+        //    {
+        //        Instantiate(cube3, worm.wall[i], Quaternion.identity);
+        //    }
+        //}
+
+
     }
 
     void Update()

@@ -78,6 +78,8 @@ public class Biome : ScriptableObject
         return (total / maxValue) * BlockInfo.ChunkHeight;
     }
 
+    //이 모든 과정을 하나의 함수로 만들어서 불필요한 반복 줄이기
+
     //기본적인 지형을 만들기
     public void CreateBaseMap(Chunk chunk, ref int[,,] map)
     {
@@ -112,30 +114,30 @@ public class Biome : ScriptableObject
         }
     }
 
-    //public void CreateUnderground(Chunk chunk)
-    //{
-    //    List<BlockOrder> list = new List<BlockOrder>();
+    public void CreateUnderground(Chunk chunk)
+    {
+        List<BlockOrder> list = new List<BlockOrder>();
 
-    //    for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-    //    {
-    //        for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-    //        {
-    //            int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-    //            for (int y = 0; y < BlockInfo.ChunkHeight; y++)
-    //            {
-    //                for (int i = undergrounds.Length - 1; i >= 0; i--)
-    //                {
-    //                    if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-    //                    {
-    //                        list.Add(undergrounds[i].CreateUnderground(new Vector3Int(x + chunk.Position.x, y, z + chunk.Position.z)));
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
+        for (int x = 0; x < BlockInfo.ChunkWidth; x++)
+        {
+            for (int z = 0; z < BlockInfo.ChunkWidth; z++)
+            {
+                int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
+                for (int y = 0; y < BlockInfo.ChunkHeight; y++)
+                {
+                    for (int i = undergrounds.Length - 1; i >= 0; i--)
+                    {
+                        if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+                        {
+                            list.Add(undergrounds[i].CreateUnderground(new Vector3Int(x + chunk.Position.x, y, z + chunk.Position.z)));
+                        }
+                    }
+                }
+            }
+        }
 
-    //    chunk.World.EditBlock(list);
-    //}
+        World.Instance.WorldPositionEdit(list);
+    }
 
     //나무 심기
     public void CreateTreeMap(Chunk chunk)
@@ -154,6 +156,39 @@ public class Biome : ScriptableObject
                 }
             }
         }
+    }
+
+    public void CreateCave(Chunk chunk)
+    {
+        //땅 에서 랜덤으로 동굴 만들기
+
+        //일단은 땅 위에서만 만들기로
+
+        Vector3Int index;
+        List<BlockOrder> orders = new ();
+        for (int x = 0; x < BlockInfo.ChunkWidth; x++)
+        {
+            for (int z = 0; z < BlockInfo.ChunkWidth; z++)
+            {
+                if(Random.Range(0,1f) > 0.8f)
+                {
+                    int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
+                    index = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+                    Worm worm = Worm_Algorithm.Instance.Start(index, Worm_Algorithm.Dir);
+
+                    for (int i = 0; i < worm.pathRange.Count; i++)
+                    {
+                        orders.Add(new BlockOrder(index, 0));
+                    }
+                }
+            }
+        }
+        World.Instance.WorldPositionEdit(orders);
+    }
+
+    public void CreateMineral(Chunk chunk)
+    {
+        //만들어진 동굴에 광물 넣기
     }
 }
 

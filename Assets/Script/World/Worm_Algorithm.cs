@@ -15,6 +15,16 @@ public class Worm_Algorithm
         } 
     }
 
+    public static List<(Vector3Int, int)> Dir = new()
+    {
+            (new Vector3Int(1, 0, 0), 6),
+            (new Vector3Int(-1, 0, 0), 6),
+            (new Vector3Int(0, 0, 1), 6),
+            (new Vector3Int(0, 0, -1), 6),
+            (new Vector3Int(0, -1, 0), 8),
+            (new Vector3Int(0, 1, 0), 1)
+    };
+
     public Worm Start(Vector3Int position, List<(Vector3Int, int)> dir)
     {
         Worm worm = new Worm(10, 2, 2, 2, dir);
@@ -68,9 +78,12 @@ public class Worm
         {
             dir = Direction();
 
-            path.Add(path[^1] + dir);
+            if(!path.Contains(path[^1] + dir))
+            {
+                path.Add(path[^1] + dir);
 
-            length--;
+                length--;
+            }
         }
     }
 
@@ -139,40 +152,40 @@ public class Worm
         Vector3Int vector = new Vector3Int (0, 1, 0);
         if(position.y + vector.y < 0)
         {
-            if(!wall.Contains(position + vector))
+            if(!wall.Contains(position + vector) && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
                 wall.Add(position + vector);
         }
 
         vector = new Vector3Int(0, -1, 0);
-        if (position.y + vector.y < 0)
+        if (position.y + vector.y < 0 && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
         {
             if (!wall.Contains(position + vector))
                 wall.Add(position + vector);
         }
 
         vector = new Vector3Int(0, 0, 1);
-        if (position.y + vector.y < 0)
+        if (position.y + vector.y < 0 && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
         {
             if (!wall.Contains(position + vector))
                 wall.Add(position + vector);
         }
 
         vector = new Vector3Int(0, 0, -1);
-        if (position.y + vector.y < 0)
+        if (position.y + vector.y < 0 && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
         {
             if (!wall.Contains(position + vector))
                 wall.Add(position + vector);
         }
 
         vector = new Vector3Int(-1, 0, 0);
-        if (position.y + vector.y < 0)
+        if (position.y + vector.y < 0 && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
         {
             if (!wall.Contains(position + vector))
                 wall.Add(position + vector);
         }
 
         vector = new Vector3Int(1, 0, 0);
-        if (position.y + vector.y < 0)
+        if (position.y + vector.y < 0 && !pathRange.Contains(position + vector) && !path.Contains(position + vector))
         {
             if (!wall.Contains(position + vector))
                 wall.Add(position + vector);

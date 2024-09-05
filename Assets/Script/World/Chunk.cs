@@ -54,7 +54,7 @@ public class Chunk : MonoBehaviour
         //drawInfo.Add(new Vector3(2, 0, 2), new Vector3(0,45,0));
     }
 
-    public int EditBlock(Vector3Int index, int id)
+    public int EditBlock(Vector3Int index, int id, bool draw)
     {
         if (index.x < 0 || index.x >= map.GetLength(0))
             return 0;
@@ -64,7 +64,10 @@ public class Chunk : MonoBehaviour
             return 0;
         int ex = map[index.x, index.y, index.z];
         map[index.x, index.y, index.z] = id;
-        Draw();
+        
+        if( draw )
+            Draw();
+        
         return ex;
     }
 
