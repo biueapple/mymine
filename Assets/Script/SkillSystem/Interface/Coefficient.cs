@@ -35,10 +35,10 @@ public class Coefficient
 
     public float Calculate(int level, Stat stat)
     {
-        return Figure + (LevelFigure * level) + (stat.AttributeValue(coefficientType) * CoefficientFigure) ;
+        return Figure + (LevelFigure * level) + (stat.GetAttribute(coefficientType) * CoefficientFigure) ;
     }
     public float Value(Stat stat)
     {
-        return stat.AttributeValue(coefficientType);
+        return stat.GetAttribute(coefficientType);
     }
 }

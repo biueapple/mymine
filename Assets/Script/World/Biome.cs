@@ -114,10 +114,22 @@ public class Biome : ScriptableObject
         }
     }
 
-    public void CreateUnderground(Chunk chunk)
+    public void CreateWait(Chunk chunk, ref int[,,] map)
     {
-        List<BlockOrder> list = new List<BlockOrder>();
+        for(int i = 0; i < chunk.wait.Count; i++)
+        {
+            if( (chunk.wait[i].Item1.x >= 0 && chunk.wait[i].Item1.x < BlockInfo.ChunkWidth) &&
+                (chunk.wait[i].Item1.y >= 0 && chunk.wait[i].Item1.y < BlockInfo.ChunkHeight) &&
+                (chunk.wait[i].Item1.z >= 0 && chunk.wait[i].Item1.z < BlockInfo.ChunkWidth))
+            {
+                map[chunk.wait[i].Item1.x, chunk.wait[i].Item1.y, chunk.wait[i].Item1.z] = chunk.wait[i].Item2;
+            }
+        }
+        chunk.wait.Clear();
+    }
 
+    public void CreateUnderground(Chunk chunk, ref int[,,] map)
+    {
         for (int x = 0; x < BlockInfo.ChunkWidth; x++)
         {
             for (int z = 0; z < BlockInfo.ChunkWidth; z++)
@@ -129,18 +141,16 @@ public class Biome : ScriptableObject
                     {
                         if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
                         {
-                            list.Add(undergrounds[i].CreateUnderground(new Vector3Int(x + chunk.Position.x, y, z + chunk.Position.z)));
+                            map[x, y, z] = undergrounds[i].type;
                         }
                     }
                 }
             }
         }
-
-        World.Instance.WorldPositionEdit(list);
     }
 
     //나무 심기
-    public void CreateTreeMap(Chunk chunk)
+    public void CreateTreeMap(Chunk chunk, ref int[,,] map)
     {
         for (int x = 0; x < BlockInfo.ChunkWidth; x++)
         {
@@ -151,42 +161,79 @@ public class Biome : ScriptableObject
                 {
                     if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
                     {
-                        World.Instance.WorldPositionEdit(treePlacements[i].CreateTree(new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z)));
+                        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
                     }
                 }
             }
         }
     }
 
-    public void CreateCave(Chunk chunk)
+    private void CreateTreeMapWorld(Chunk chunk, ref int[,,] map, List<BlockOrder> orders)
+    {
+        //여기서 들어오는 orders에는 음수나 길이를 벗어난 위치의 값이 있을 수 있는데 그 경우 다른 청크에 값을 넘겨야 함
+        //만약 이미 만들어진 청크라면 값을 변경만 하고 
+        //만들어지지 않은 청크라면 wait에 값을 넣어놓기
+        for(int i = orders.Count - 1; i >= 0;i--)
+        {
+            if ((orders[i].local.x >= 0 && orders[i].local.x < BlockInfo.ChunkWidth) &&
+               (orders[i].local.y >= 0 && orders[i].local.y < BlockInfo.ChunkHeight) &&
+               (orders[i].local.z >= 0 && orders[i].local.z < BlockInfo.ChunkWidth))
+            {
+                //청크의 범위 안
+                map[orders[i].local.x, orders[i].local.y, orders[i].local.z] = orders[i].type;
+                //리스트 재활용하려고 사용한 인덱스는 삭제
+                orders.RemoveAt(i);
+            }
+            else
+            {
+                //청크 범위 밖이면 월드에게 줘야하니 포지션을 월드로 바꿈
+                orders[i].local += chunk.Position; 
+            }    
+        }
+
+        //청크의 범위 밖
+        //월드에게 local 좌표 + 청크 위치 값을 넘겨서 주기
+        World.Instance.BiomeCallEdit(orders);
+    }
+
+    public void CreateCave(Chunk chunk, ref int[,,] map)
     {
         //땅 에서 랜덤으로 동굴 만들기
 
         //일단은 땅 위에서만 만들기로
 
-        Vector3Int index;
-        List<BlockOrder> orders = new ();
+        Vector3Int worldPosition;
+        List<BlockOrder> orders = new();
         for (int x = 0; x < BlockInfo.ChunkWidth; x++)
         {
             for (int z = 0; z < BlockInfo.ChunkWidth; z++)
             {
-                if(Random.Range(0,1f) > 0.8f)
+                if (Random.Range(0, 1f) > 0.9f)
                 {
                     int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-                    index = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-                    Worm worm = Worm_Algorithm.Instance.Start(index, Worm_Algorithm.Dir);
+                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+                    Worm worm = Worm_Algorithm.Instance.Start(worldPosition, Worm_Algorithm.Dir);
 
                     for (int i = 0; i < worm.pathRange.Count; i++)
                     {
-                        orders.Add(new BlockOrder(index, 0));
+                        if ((worm.pathRange[i].x >= 0 && worm.pathRange[i].x < BlockInfo.ChunkWidth) &&
+                            (worm.pathRange[i].y >= 0 && worm.pathRange[i].y < BlockInfo.ChunkHeight) &&
+                            (worm.pathRange[i].z >= 0 && worm.pathRange[i].z < BlockInfo.ChunkWidth))
+                        {
+                            map[worm.pathRange[i].x, worm.pathRange[i].y, worm.pathRange[i].z] = 0;
+                        }
+                        else
+                        {
+                            orders.Add(new BlockOrder(worldPosition, 0));
+                        } 
                     }
                 }
             }
         }
-        World.Instance.WorldPositionEdit(orders);
+        World.Instance.BiomeCallEdit(orders);
     }
 
-    public void CreateMineral(Chunk chunk)
+    public void CreateMineral(Chunk chunk, ref int[,,] map)
     {
         //만들어진 동굴에 광물 넣기
     }
@@ -238,16 +285,16 @@ public class TreePlacement
         return false;
     }
 
-    public List<BlockOrder> CreateTree(Vector3Int world)
+    public List<BlockOrder> CreateTree(Vector3Int local)
     {
         List<BlockOrder> list = new ();
         int height = Random.Range(minHeight, maxHeight);
         //나무가설치될 땅은 흙이다
-        list.Add(new BlockOrder(world.x, world.y, world.z, groundType));
+        list.Add(new BlockOrder(local.x, local.y, local.z, groundType));
 
         for (int i = 1; i < height; i++)
         {
-            list.Add(new BlockOrder(world.x, world.y + i, world.z, woodType));
+            list.Add(new BlockOrder(local.x, local.y + i, local.z, woodType));
         }
         if (!leaves)
             return list;
@@ -262,7 +309,7 @@ public class TreePlacement
                 {
                     if (x == 0 && z == 0)
                         continue;
-                    list.Add(new BlockOrder(world.x + x, world.y + y + height, world.z + z, leavesType));
+                    list.Add(new BlockOrder(local.x + x, local.y + y + height, local.z + z, leavesType));
                 }
             }
         }
@@ -275,15 +322,15 @@ public class TreePlacement
             {
                 if (x == 0 && z == 0)
                     continue;
-                list.Add(new BlockOrder(world.x + x, world.y + height, world.z + z, leavesType));
+                list.Add(new BlockOrder(local.x + x, local.y + height, local.z + z, leavesType));
             }
         }
         height += 1;
-        list.Add(new BlockOrder(world.x + 0, world.y + height, world.z + 1, leavesType));
-        list.Add(new BlockOrder(world.x + 1, world.y + height, world.z + 0, leavesType));
-        list.Add(new BlockOrder(world.x + 0, world.y + height, world.z + 0, leavesType));
-        list.Add(new BlockOrder(world.x + -1, world.y + height, world.z + 0, leavesType));
-        list.Add(new BlockOrder(world.x + 0, world.y + height, world.z + -1, leavesType));
+        list.Add(new BlockOrder(local.x + 0, local.y + height, local.z + 1, leavesType));
+        list.Add(new BlockOrder(local.x + 1, local.y + height, local.z + 0, leavesType));
+        list.Add(new BlockOrder(local.x + 0, local.y + height, local.z + 0, leavesType));
+        list.Add(new BlockOrder(local.x + -1, local.y + height, local.z + 0, leavesType));
+        list.Add(new BlockOrder(local.x + 0, local.y + height, local.z + -1, leavesType));
 
         return list;
     }
@@ -332,17 +379,17 @@ public class Underground
 public class BlockOrder
 {
     //이름이 world인 이유는 월드포지션을 줘야한다고 기억할려고
-    public Vector3Int world;
+    public Vector3Int local;
     //무슨 블록인지 
     public byte type;
     public BlockOrder(int x, int y, int z, byte type)
     {
-        world = new Vector3Int(x, y, z);
+        local = new Vector3Int(x, y, z);
         this.type = type;
     }
     public BlockOrder(Vector3Int pos, byte type)
     {
-        world = pos;
+        local = pos;
         this.type = type;
     }
 }

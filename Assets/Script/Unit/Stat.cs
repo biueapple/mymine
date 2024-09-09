@@ -318,11 +318,6 @@ public class Stat : MonoBehaviour
     //이동속도
     public float Speed { get { return original.speed + elevated.speed; } }
 
-    public float AttributeValue(Attribute_Property attributeType)
-    {
-        return original.Value(attributeType) + elevated.Value(attributeType);
-    }
-
     //private List<Buff> buffs = new List<Buff>();
     //public int buffCount { get { return buffs.Count; }}
     //private Coroutine buffCoroutine = null;
@@ -473,7 +468,7 @@ public class Stat : MonoBehaviour
     }
 
     //
-
+    //밑에 함수와는 다른점이 hp mp barriar 밖에 없음
     public float GetAttribute(Attribute_Property attribute)
     {
         return attribute switch
@@ -481,6 +476,30 @@ public class Stat : MonoBehaviour
             Attribute_Property.HP => MAXHP,
             Attribute_Property.MP => MAXMP,
             Attribute_Property.BARRIER => MAXBarrier,
+            Attribute_Property.DEFENCE => Defence,
+            Attribute_Property.RESISTANCE => Resistance,
+            Attribute_Property.AD => AD,
+            Attribute_Property.AP => AP,
+            Attribute_Property.ATTACKSPEED => AttackSpeed,
+            Attribute_Property.CRITICALCHANCE => CriticalChance,
+            Attribute_Property.CRITICALDEFENCE => CriticalDefence,
+            Attribute_Property.CRITICALMULTIPLIER => CriticalMultiplier,
+            Attribute_Property.DEFENCEPENETRATION => DefencePenetration,
+            Attribute_Property.DEFENCEPENETRATIONPER => DefencePenetrationPer,
+            Attribute_Property.RESISTANCEPENETRATION => ResistancePenetration,
+            Attribute_Property.RESISTANCEPENETRATIONPER => ResistancePenetrationPer,
+            Attribute_Property.SPEED => Speed,
+            _ => 0,
+        };
+    }
+
+    public float NowAttribute(Attribute_Property attribute)
+    {
+        return attribute switch
+        {
+            Attribute_Property.HP => hp,
+            Attribute_Property.MP => mp,
+            Attribute_Property.BARRIER => barrier,
             Attribute_Property.DEFENCE => Defence,
             Attribute_Property.RESISTANCE => Resistance,
             Attribute_Property.AD => AD,

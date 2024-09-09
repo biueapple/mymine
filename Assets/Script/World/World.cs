@@ -68,13 +68,12 @@ public class World : MonoBehaviour
     {
         Vector3Int index = GetChunkIndex(GameManager.Instance.Players[0].transform.position);
         var list = GetChunkRangeIfCreate(index, 2);
-        for(int i = 0; i < list.Count; i++)
+
+        list.ForEach(x => x.Active());
+
+        for (int i = 0; i < list.Count; i++)
         {
-            list[i].Biome.CreateUnderground(list[i]);
-            list[i].Biome.CreateTreeMap(list[i]);
-            list[i].Biome.CreateCave(list[i]);
             list[i].Draw();
-            list[i].Active();
             yield return null;
         }
         activeChunks.AddRange(list);
@@ -84,13 +83,16 @@ public class World : MonoBehaviour
 
     private IEnumerator PlayerSensing()
     {
-        Vector3Int index = GetChunkIndex(GameManager.Instance.Players[0].transform.position);
-        if (playerChunkIndex != index)
+        while(true)
         {
-            playerChunkIndex = index;
-            ActiveChunkFind();
+            Vector3Int index = GetChunkIndex(GameManager.Instance.Players[0].transform.position);
+            if (playerChunkIndex != index)
+            {
+                playerChunkIndex = index;
+                ActiveChunkFind();
+            }
+            yield return new WaitForSeconds(1);
         }
-        yield return null;
     }
 
     //플레이어의 위치 감지
@@ -120,8 +122,8 @@ public class World : MonoBehaviour
         {
             if (!activeChunks.Contains(active[i]))
             {
-                active[i].Draw();
                 active[i].Active();
+                active[i].Draw();
             }
         }
 
@@ -162,22 +164,25 @@ public class World : MonoBehaviour
         
         if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
         {
-            position -= chunk.Position;
-            int index = chunk.IndexToBlockID(position);
-            
-            if (index > 0)
+            if(chunk.Create)
             {
-                if (GameManager.Instance.GetBlock(index).Transparent)
-                    return true;
+                position -= chunk.Position;
+                int index = chunk.IndexToBlockID(position);
 
-                return false;
+                if (index > 0)
+                {
+                    if (GameManager.Instance.GetBlock(index).Transparent)
+                        return true;
+
+                    return false;
+                }
+                //청크 내의 공기는 투명
+                return true;
             }
-            //청크 내의 공기는 투명
-            return true;
         }
 
         //청크 바깥 없는 존재 불투명 (그리지 않음)
-        return true;
+        return false;
     }
 
     public bool WorldBlockPositionSolid(Vector3 position)
@@ -187,33 +192,39 @@ public class World : MonoBehaviour
         
         if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
         {
-            positionInt -= chunk.Position;
-            int index = chunk.IndexToBlockID(positionInt);
-            if (index > 0)
+            if (chunk.Create)
             {
-                if (GameManager.Instance.GetBlock(index).IsSolid)
+                positionInt -= chunk.Position;
+                int index = chunk.IndexToBlockID(positionInt);
+                if (index > 0)
                 {
-                    return true;
-                }
+                    if (GameManager.Instance.GetBlock(index).IsSolid)
+                    {
+                        return true;
+                    }
 
-                return false;
+                    return false;
+                }
             }
         }
         return false;
     }
 
-    public Block WroldPositionToBlock(Vector3 position)
+    public Block WorldPositionToBlock(Vector3 position)
     {
         Vector3Int positionInt = new (Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z));
         Vector3Int chunkIndex = new(Mathf.FloorToInt(position.x / BlockInfo.ChunkWidth), Mathf.FloorToInt(position.y / BlockInfo.ChunkHeight), Mathf.FloorToInt(position.z / BlockInfo.ChunkWidth));
 
         if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
         {
-            positionInt -= chunk.Position;
-            int index = chunk.IndexToBlockID(positionInt); 
-            if (index > 0)
+            if (chunk.Create)
             {
-                return GameManager.Instance.GetBlock(index);
+                positionInt -= chunk.Position;
+                int index = chunk.IndexToBlockID(positionInt);
+                if (index > 0)
+                {
+                    return GameManager.Instance.GetBlock(index);
+                }
             }
         }
         return null;
@@ -227,38 +238,81 @@ public class World : MonoBehaviour
         //만약 청크가 있다면
         if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
         {
-            //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
-            Vector3Int Chunkposition = position - chunk.Position;
-
-            //그 위치에 무슨 블록이 있는지
-            int index = chunk.EditBlock(Chunkposition, 0, true);
-            if (index > 0)
+            if(chunk.Create)
             {
-                //그 블록이 드랍하는 아이템 id는 무엇인지
-                int itemID = GameManager.Instance.GetBlock(index).ItemID;
+                //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
+                Vector3Int Chunkposition = position - chunk.Position;
 
-                //아이템id가 0은 없기에 
-                if (itemID > 0)
+                //그 위치에 무슨 블록이 있는지
+                int index = chunk.EditBlock(Chunkposition, 0, true);
+                if (index > 0)
                 {
-                    FlowManager.Instance.DropItem(position + new Vector3(0.5f, 0.5f, 0.5f), itemID, 1, Vector3.zero);
-                }
-            }
+                    //그 블록이 드랍하는 아이템 id는 무엇인지
+                    int itemID = GameManager.Instance.GetBlock(index).ItemID;
 
-            //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
-            for (int i = 0; i < BlockInfo.faceChecks.Length; i++)
-            {
-                //위치 + 모든면의 위치값이 다른청크가 나올경우
-                if (chunks.TryGetValue(GetChunkIndex(position + BlockInfo.faceChecks[i]), out Chunk ex))
-                {
-                    //그 청크또한 다시 그려야 함
-                    if (!(chunk.Position == ex.Position))
+                    //아이템id가 0은 없기에 
+                    if (itemID > 0)
                     {
-                        ex.Draw();
+                        FlowManager.Instance.DropItem(position + new Vector3(0.5f, 0.5f, 0.5f), itemID, 1, Vector3.zero);
                     }
                 }
-            }
 
-            return true;
+                //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
+                for (int i = 0; i < BlockInfo.faceChecks.Length; i++)
+                {
+                    //위치 + 모든면의 위치값이 다른청크가 나올경우
+                    if (chunks.TryGetValue(GetChunkIndex(position + BlockInfo.faceChecks[i]), out Chunk ex))
+                    {
+                        //그 청크또한 다시 그려야 함
+                        if (!(chunk.Position == ex.Position))
+                        {
+                            ex.Draw();
+                        }
+                    }
+                }
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool WorldPositionInstall(Vector3Int position, int id)
+    {
+        //월드포지션을 청크의 인덱스로 변환하는 과정 (-좌표에선 int로 계산시 값이 잘못나오기에 float으로 계산을 해줘야 함 {[int = -2 / 16 = 0] , [float -2.0 / 16 = -1]})
+        Vector3Int chunkIndex = new(Mathf.FloorToInt((float)position.x / BlockInfo.ChunkWidth), Mathf.FloorToInt((float)position.y / BlockInfo.ChunkHeight), Mathf.FloorToInt((float)position.z / BlockInfo.ChunkWidth));
+
+        //만약 청크가 있다면
+        if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
+        {
+            if(chunk.Create)
+            {
+                //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
+                Vector3Int Chunkposition = position - chunk.Position;
+
+                //그 위치에 무슨 블록이 있는지
+                int index = chunk.IndexToBlockID(Chunkposition);
+                if (index == 0)
+                {
+                    chunk.EditBlock(chunkIndex, id, true);
+                }
+
+                //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
+                for (int i = 0; i < BlockInfo.faceChecks.Length; i++)
+                {
+                    //위치 + 모든면의 위치값이 다른청크가 나올경우
+                    if (chunks.TryGetValue(GetChunkIndex(position + BlockInfo.faceChecks[i]), out Chunk ex))
+                    {
+                        //그 청크또한 다시 그려야 함
+                        if (!(chunk.Position == ex.Position))
+                        {
+                            ex.Draw();
+                        }
+                    }
+                }
+
+                return true;
+            }
         }
         return false;
     }
@@ -274,44 +328,70 @@ public class World : MonoBehaviour
             //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
             Vector3Int Chunkposition = position - chunk.Position;
 
-            //그 위치에 무슨 블록이 있는지
-            chunk.EditBlock(Chunkposition, id, true);
-
-            //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
-            for(int i = 0; i < BlockInfo.faceChecks.Length; i++)
+            if (chunk.Create)
             {
-                //위치 + 모든면의 위치값이 다른청크가 나올경우
-                if (chunks.TryGetValue(GetChunkIndex(position + BlockInfo.faceChecks[i]), out Chunk ex))
+                //그 위치에 무슨 블록이 있는지
+                chunk.EditBlock(Chunkposition, id, true);
+
+                //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크
+                for (int i = 0; i < BlockInfo.faceChecks.Length; i++)
                 {
-                    //그 청크또한 다시 그려야 함
-                    if(! (chunk.Position == ex.Position))
+                    //위치 + 모든면의 위치값이 다른청크가 나올경우
+                    if (chunks.TryGetValue(GetChunkIndex(position + BlockInfo.faceChecks[i]), out Chunk ex))
                     {
-                        ex.Draw();
+                        //그 청크또한 다시 그려야 함
+                        if (!(chunk.Position == ex.Position))
+                        {
+                            ex.Draw();
+                        }
                     }
                 }
+
+                return true;
             }
-            
-            return true;
+            else
+            {
+                chunk.wait.Add((Chunkposition, id));
+            }
         }
         return false;
     }
 
-    public void WorldPositionEdit(List<BlockOrder> blockOrders)
+    public void BiomeCallEdit(List<BlockOrder> orders)
     {
-        //월드포지션을 청크의 인덱스로 변환하는 과정 (-좌표에선 int로 계산시 값이 잘못나오기에 float으로 계산을 해줘야 함 {[int = -2 / 16 = 0] , [float -2.0 / 16 = -1]})
-        Vector3Int chunkIndex;
-        for (int i = 0; i < blockOrders.Count; i++)
+        for (int i = 0; i < orders.Count; i++)
         {
-            chunkIndex = new(Mathf.FloorToInt((float)blockOrders[i].world.x / BlockInfo.ChunkWidth), Mathf.FloorToInt((float)blockOrders[i].world.y / BlockInfo.ChunkHeight), Mathf.FloorToInt((float)blockOrders[i].world.z / BlockInfo.ChunkWidth));
+            //여기로 올때 바이옴이 orders의 local값을 world로 바꿔준 후에 보내줌
+
+            //월드포지션을 청크의 인덱스로 변환하는 과정 (-좌표에선 int로 계산시 값이 잘못나오기에 float으로 계산을 해줘야 함 {[int = -2 / 16 = 0] , [float -2.0 / 16 = -1]})
+            Vector3Int chunkIndex = new(Mathf.FloorToInt((float)orders[i].local.x / BlockInfo.ChunkWidth), Mathf.FloorToInt((float)orders[i].local.y / BlockInfo.ChunkHeight), Mathf.FloorToInt((float)orders[i].local.z / BlockInfo.ChunkWidth));
+
+            //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
+            Vector3Int Chunkposition;
 
             //만약 청크가 있다면
             if (chunks.TryGetValue(chunkIndex, out Chunk chunk))
             {
                 //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
-                Vector3Int Chunkposition = blockOrders[i].world - chunk.Position;
+                Chunkposition = orders[i].local - chunk.Position;
 
-                //그 위치에 무슨 블록이 있는지
-                chunk.EditBlock(Chunkposition, blockOrders[i].type, false);
+                if(chunk.Create)
+                {
+                    chunk.EditBlock(Chunkposition, orders[i].type, false);
+                }
+                else
+                {
+                    chunk.wait.Add((Chunkposition, orders[i].type));
+                }
+            }
+            else
+            {
+                Chunk c = CreateChunk(chunkIndex);
+
+                //월드 포지션을 청크포지션으로 바꿔줌 (-2 13 -5 => 13 13 10)
+                Chunkposition = orders[i].local - c.Position;
+
+                c.wait.Add((Chunkposition, orders[i].type));
             }
         }
     }
@@ -334,7 +414,7 @@ public class World : MonoBehaviour
             //lastPos == pos 인경우 continue 할려 했는데 lastPos는 Vector3Int 고 pos 는 Vector3라서 비교가 안돼네
 
             //블록이 있는가?
-            Block scriptable = WroldPositionToBlock(pos);
+            Block scriptable = WorldPositionToBlock(pos);
             if (scriptable != null)
             {
                 //있다면 그 블록의 위치가 파괴될 블록의 위치고

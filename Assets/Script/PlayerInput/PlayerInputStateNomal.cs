@@ -80,7 +80,7 @@ public class PlayerInputStateNomal : IPlayerInputSystem
                     }
                     if (inventorySystem.HotkeyInterface.SelectSlot.Item is IInstall install)
                     {
-                        if (World.Instance.WorldPositionEdit(laycast.lastPositionToInt, install.BlockID))
+                        if (World.Instance.WorldPositionInstall(laycast.lastPositionToInt, install.BlockID))
                         {
                             inventorySystem.HotkeyInterface.SelectSlot.Update(inventorySystem.HotkeyInterface.SelectSlot.Item, inventorySystem.HotkeyInterface.SelectSlot.Amount - 1);
                         }

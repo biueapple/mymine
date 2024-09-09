@@ -25,7 +25,7 @@ public class WorldCollisionToProjectile : IProjectile
     {
         if(projectile != null)
         {
-            if(World.Instance.WroldPositionToBlock(GameManager.Instance.ChunkIndex(projectileObject.transform.position)).ID != 0)
+            if(World.Instance.WorldPositionToBlock(GameManager.Instance.ChunkIndex(projectileObject.transform.position)).ID != 0)
             {
                 Debug.Log("풀링오브젝트를 사용하지 않는 destroy");
                 GameObject.Destroy(projectileObject.gameObject);

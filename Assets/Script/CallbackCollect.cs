@@ -17,7 +17,7 @@ public interface IMoveCallback
 //실제로 얼마나 움직였는지 양과 방향을 가지고 리턴
 public interface IMovePhysicsCallback
 {
-    void Move(Vector3 distance);
+    void MovePhysics(Vector3 distance);
 }
 
 // ↑ move에 관한 콜백

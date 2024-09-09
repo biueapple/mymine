@@ -962,6 +962,7 @@ MonoBehaviour:
   cube1: {fileID: 2046294524}
   cube2: {fileID: 164844662}
   cube3: {fileID: 1637905086}
+  cube4: {fileID: 0}
 --- !u!4 &1232490278
 Transform:
   m_ObjectHideFlags: 0

@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//청크는 만들어질 때 청크를 채우고 그리는 것이 아니라
+//만들어질 때 자신에게 외부에서 부여된 블록들을 리스트로 가지고 있다가 (옆 청크에서 만들어진 나무의 잎이 넘어오는 경우나 동굴이 청크를 지나가는 경우)
+//청크를 실질적으로 생성할때 그 리스트를 포함해서 바이옴을 이용해 청크를 채우는 것
 public class Chunk : MonoBehaviour
 {
+    public bool Create { get { return map == null ? false : true; } }
+
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
@@ -24,6 +30,8 @@ public class Chunk : MonoBehaviour
 
     public Matrix4x4 R = Matrix4x4.identity;
 
+    public List<(Vector3Int, int)> wait;
+
     public void Init(Vector3Int position, Biome biome)
     {
         this.position = position;
@@ -33,25 +41,10 @@ public class Chunk : MonoBehaviour
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshRenderer.material = World.Instance.Material;
 
-        map = new int[BlockInfo.ChunkWidth, BlockInfo.ChunkHeight, BlockInfo.ChunkWidth];
+        //map = new int[BlockInfo.ChunkWidth, BlockInfo.ChunkHeight, BlockInfo.ChunkWidth];
         this.biome = biome;
-        //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-        //{
-        //    for(int z = 0; z < BlockInfo.ChunkWidth; z++)
-        //    {
-        //        map[x, 0, z] = 1;
-        //    }
-        //}
-
-        //map[1, 2, 2] = 1;
-        //map[1, 3, 2] = 1;
-        //map[1, 3, 2] = 1;
-        //map[2, 3, 2] = 1;
-        //map[3, 3, 2] = 1;
-        //map[4, 2, 2] = 1;
-        //map[2, 1, 1] = 1;
-        biome.CreateBaseMap(this, ref map);
-        //drawInfo.Add(new Vector3(2, 0, 2), new Vector3(0,45,0));
+        wait = new();
+        //biome.CreateBaseMap(this, ref map);
     }
 
     public int EditBlock(Vector3Int index, int id, bool draw)
@@ -81,6 +74,15 @@ public class Chunk : MonoBehaviour
 
     public void Active()
     {
+        if(map == null)
+        {
+            map = new int[BlockInfo.ChunkWidth, BlockInfo.ChunkHeight, BlockInfo.ChunkWidth];
+            biome.CreateBaseMap(this, ref map);
+            biome.CreateWait(this, ref map);
+            biome.CreateUnderground(this, ref map);
+            biome.CreateTreeMap(this, ref map);
+            //biome.CreateCave(this, ref map);
+        }
         gameObject.SetActive(true);
     }
     

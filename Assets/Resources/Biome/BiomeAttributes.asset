@@ -27,7 +27,7 @@ MonoBehaviour:
   scaleHeight: 0.5
   cave: 0
   treePlacements:
-  - probability: 0
+  - probability: 0.1
     scaleTree: 8
     offsetTree: 0
     woodType: 7

@@ -141,7 +141,7 @@ public class MoveSystem : MonoBehaviour
         {
             _moving = true;
             //실제로 움직여 졌는지 콜백
-            _movePhysicsCallback.ForEach(callback => callback.Move(_velocity));
+            _movePhysicsCallback.ForEach(callback => callback.MovePhysics(_velocity));
         }
         else if(_moving && _velocity == Vector3.zero)
         {
