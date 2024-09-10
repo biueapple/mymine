@@ -19,6 +19,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public enum ITEM_ENUM
+    {
+        Bone = 1,
+        Fish,
+        Stone,
+        Sword,
+        Dirt,
+        Workbench,
+        WoodShovels,
+        Wood,
+        Plank,
+        WoodenStick,
+        Coal,
+    }
+
+    public enum BLCOK_ENUM
+    {
+        Stone = 1,
+        Dirt,
+        Bedrock,
+        Workbench,
+        ArableDirt,
+        Grass,
+        Wood,
+        Leaf,
+        Plank,
+        CoalOre,
+
+    }
+
     private void Awake()
     {
         if(instance == null)
@@ -33,6 +63,7 @@ public class GameManager : MonoBehaviour
         AddItem(new Item_Wood(8));
         AddItem(new Item_Plank(9));
         AddItem(new Item_WoodenStick(10));
+        AddItem(new Item_Coal(11));
 
         AddBlock(new Stone(1));
         AddBlock(new Dirt(2));
@@ -43,6 +74,7 @@ public class GameManager : MonoBehaviour
         AddBlock(new Wood(7));
         AddBlock(new leaf(8));
         AddBlock(new Plank(9));
+        AddBlock(new CoalOre(10));
 
         DontDestroyOnLoad(instance);
     }

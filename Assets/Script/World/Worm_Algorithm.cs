@@ -25,15 +25,11 @@ public class Worm_Algorithm
             (new Vector3Int(0, 1, 0), 1)
     };
 
-    public Worm Start(Vector3Int position, List<(Vector3Int, int)> dir)
+    public Worm Start(List<(Vector3Int, int)> dir, Vector3Int size, int length)
     {
-        Worm worm = new Worm(10, 2, 2, 2, dir);
+        Worm worm = new Worm(length, size.x, size.y, size.z, dir);
         
         worm.Start();
-
-        worm.PathRange(position);
-
-        worm.Wall();
 
         return worm;
     }
@@ -53,12 +49,14 @@ public class Worm
     public List<(Vector3Int, int)> dir = new ();
     //나의 범위 안에 vector값들
     public List<Vector3Int> range = new();
+    //나의 범위의 벽의 위치들
+    public List<Vector3Int> wall = new ();
     //나의 경로
     public List<Vector3Int> path = new() ;
     //나의 경로의 범위값들
     public List<Vector3Int> pathRange = new();
     //나의 경로의 벽의 값들
-    public List<Vector3Int> wall = new() ;
+    public List<Vector3Int> pathWall = new() ;
 
     public Worm(int length, int w, int h, int d, List<(Vector3Int, int)> values)
     {
@@ -79,30 +77,43 @@ public class Worm
         {
             dir = Direction();
 
-            if(Dig(path[^1] + dir) && !path.Contains(path[^1] + dir))
+            Dig(path[^1] + dir);
+        }
+        Cutting();
+    }
+
+    private void Dig(Vector3Int dir)
+    {
+        if (!path.Contains(dir))
+        {
+            path.Add(dir);
+            length--;
+        }
+    }
+
+    private void Cutting()
+    {
+        for(int i = 0; i < path.Count; i++)
+        {
+            for(int r = 0; r < range.Count; r++)
             {
-                path.Add(path[^1] + dir);
-
-                length--;
+                if (!pathRange.Contains(path[i] + range[r]))
+                {
+                    pathRange.Add(path[i] + range[r]);
+                }
+                if (pathWall.Contains(path[i] + range[r]))
+                {
+                    pathWall.Remove(path[i] + range[r]);
+                }
             }
-        }
-    }
 
-    //경로에서 자신의 범위만큼 땅파기
-    public void PathRange(Vector3Int position)
-    {
-        for (int i = 0; i < path.Count; i++)
-        {
-            Range(position + path[i]);
-        }
-    }
-
-    //경로에서 벽에 해당하는 곳 찾기
-    public void Wall()
-    {
-        for (int i = 0; i < pathRange.Count; i++)
-        {
-            WallCheck(pathRange[i]);
+            for (int w = 0; w < wall.Count; w++)
+            {
+                if (!pathWall.Contains(path[i] + wall[w]) && !pathRange.Contains(path[i] + wall[w]))
+                {
+                    pathWall.Add(path[i] + wall[w]);
+                } 
+            }
         }
     }
 
@@ -124,89 +135,60 @@ public class Worm
         return Vector3Int.zero;
     }
 
-    private void Range(Vector3Int vector)
-    {
-        for (int i = 0; i < range.Count; i++)
-        {
-            if(!pathRange.Contains(range[i] + vector))
-                pathRange.Add(range[i] + vector);
-        }
-    }
-
     private void Init()
     {
-        for(int x = -w + 1; x < w; x++)
+        for (int x = -w + 1; x < w; x++)
         {
             for (int y = -h + 1; y < h; y++)
             {
                 for (int z = -d + 1; z < d; z++)
                 {
-                    range.Add(new Vector3Int (x, y, z));
+                    range.Add(new Vector3Int(x, y, z));
                 }
             }
         }
-    }
 
-    private void WallCheck(Vector3Int position)
-    {
-        //위 아래 앞 뒤 왼쪽 오른쪽
-        Vector3Int vector = new Vector3Int (0, 1, 0);
-        if(OuterWall(position + vector))
+        Vector3Int position;
+        for(int x = -w; x < w + 1; x++)
         {
-            if(Contain(position, vector))
-                wall.Add(position + vector);
+            for(int y = -h;  y < h + 1; y++)
+            {
+                position = new Vector3Int(x, y, -d);
+                if (!wall.Contains(position))
+                    wall.Add(position);
+
+                position = new Vector3Int(x, y, d); 
+                if (!wall.Contains(position))
+                    wall.Add(position);
+            }
         }
 
-        vector = new Vector3Int(0, -1, 0);
-        if (OuterWall(position + vector))
+        for (int z = -d; z < d + 1; z++)
         {
-            if (Contain(position, vector))
-                wall.Add(position + vector);
+            for (int y = -h; y < h + 1; y++)
+            {
+                position = new Vector3Int(-w, y, z);
+                if (!wall.Contains(position))
+                    wall.Add(position);
+
+                position = new Vector3Int(w, y, z);
+                if (!wall.Contains(position))
+                    wall.Add(position);
+            }
         }
 
-        vector = new Vector3Int(0, 0, 1);
-        if (OuterWall(position + vector))
+        for (int x = -w; x < w + 1; x++)
         {
-            if (Contain(position, vector))
-                wall.Add(position + vector);
+            for (int z = -d; z < d + 1; z++)
+            {
+                position = new Vector3Int(-w, -h, z);
+                if (!wall.Contains(position))
+                    wall.Add(position);
+
+                position = new Vector3Int(w, -h, z);
+                if (!wall.Contains(position))
+                    wall.Add(position);
+            }
         }
-
-        vector = new Vector3Int(0, 0, -1);
-        if (OuterWall(position + vector))
-        {
-            if (Contain(position, vector))
-                wall.Add(position + vector);
-        }
-
-        vector = new Vector3Int(-1, 0, 0);
-        if (OuterWall(position + vector))
-        {
-            if (Contain(position, vector))
-                wall.Add(position + vector);
-        }
-
-        vector = new Vector3Int(1, 0, 0);
-        if (OuterWall(position + vector))
-        {
-            if (Contain(position, vector))
-                wall.Add(position + vector);
-        }
-    }
-    
-    private bool Contain(Vector3Int position, Vector3Int vector)
-    {
-        return !wall.Contains(position + vector) && !pathRange.Contains(position + vector) && !path.Contains(position + vector);
-    }
-
-    private bool Dig(Vector3Int position)
-    {
-        return World.Instance.WorldPositionToBlock(position) != null ? true : false;
-    }
-
-    private bool OuterWall(Vector3Int position)
-    {
-        if (World.Instance.WorldPositionToBlock(position) != null)
-            return true;
-        return false;
     }
 }

@@ -208,24 +208,42 @@ public class Biome : ScriptableObject
         {
             for (int z = 0; z < BlockInfo.ChunkWidth; z++)
             {
-                if (Random.Range(0, 1f) > 0.9f)
+                if (Random.Range(0, 1f) > 0.999f)
                 {
                     int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-                    Worm worm = Worm_Algorithm.Instance.Start(worldPosition, Worm_Algorithm.Dir);
+                    Worm worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
 
                     for (int i = 0; i < worm.pathRange.Count; i++)
                     {
-                        if ((worm.pathRange[i].x >= 0 && worm.pathRange[i].x < BlockInfo.ChunkWidth) &&
-                            (worm.pathRange[i].y >= 0 && worm.pathRange[i].y < BlockInfo.ChunkHeight) &&
-                            (worm.pathRange[i].z >= 0 && worm.pathRange[i].z < BlockInfo.ChunkWidth))
+                        if ((worm.pathRange[i].x + x >= 0 && worm.pathRange[i].x + x < BlockInfo.ChunkWidth) &&
+                            (worm.pathRange[i].y + yHeight >= 0 && worm.pathRange[i].y + yHeight < BlockInfo.ChunkHeight) &&
+                            (worm.pathRange[i].z + z >= 0 && worm.pathRange[i].z + z < BlockInfo.ChunkWidth))
                         {
-                            map[worm.pathRange[i].x, worm.pathRange[i].y, worm.pathRange[i].z] = 0;
+                            map[worm.pathRange[i].x + x, worm.pathRange[i].y + yHeight, worm.pathRange[i].z + z] = 0;
                         }
                         else
                         {
-                            orders.Add(new BlockOrder(worldPosition, 0));
-                        } 
+                            worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+                            orders.Add(new BlockOrder(worldPosition + worm.pathRange[i], 0));
+                        }
+                    }
+
+                    for (int i = 0; i < worm.pathWall.Count; i++)
+                    {
+                        if (Random.Range(0, 1f) > 0.99f)
+                        {
+                            if ((worm.pathWall[i].x + x >= 0 && worm.pathWall[i].x + x < BlockInfo.ChunkWidth) &&
+                                (worm.pathWall[i].y + yHeight >= 0 && worm.pathWall[i].y + yHeight < BlockInfo.ChunkHeight) &&
+                                (worm.pathWall[i].z + z >= 0 && worm.pathWall[i].z + z < BlockInfo.ChunkWidth))
+                            {
+                                map[worm.pathWall[i].x + x, worm.pathWall[i].y + yHeight, worm.pathWall[i].z + z] = (int)GameManager.BLCOK_ENUM.CoalOre;
+                            }
+                            else
+                            {
+                                worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+                                orders.Add(new BlockOrder(worldPosition + worm.pathWall[i], (int)GameManager.BLCOK_ENUM.CoalOre));
+                            }
+                        }
                     }
                 }
             }

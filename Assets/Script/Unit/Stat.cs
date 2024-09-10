@@ -419,6 +419,8 @@ public class Stat : MonoBehaviour
     private void Start()
     {
         hp = original.hp + elevated.hp;
+        mp = original.mp + elevated.mp;
+        barrier = original.barrier + elevated.barrier;
     }
 
     private void Update()

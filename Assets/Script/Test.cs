@@ -51,34 +51,22 @@ public class Test : MonoBehaviour
         //    (new Vector3Int(0, -1, 0), 8),
         //    (new Vector3Int(0, 1, 0), 1)
         //};
-        //Worm worm = Worm_Algorithm.Instance.Start(new Vector3Int(0, 0, 0), dir);
-
-        //for (int i = 0; i < worm.pathRange.Count; i++)
-        //{
-        //    if (!worm.path.Contains(worm.pathRange[i]))
-        //        Instantiate(cube1, worm.pathRange[i], Quaternion.identity);
-        //}
+        //Worm worm = Worm_Algorithm.Instance.Start(dir, new Vector3Int(2,2,2), 100);
 
         //for (int i = 0; i < worm.path.Count; i++)
         //{
-        //    Instantiate(cube2, worm.path[i], Quaternion.identity);
+        //    Instantiate(cube1, worm.path[i], Quaternion.identity);
         //}
 
-        //for (int i = 0; i < worm.wall.Count; i++)
+        //for (int i = 0; i < worm.pathRange.Count; i++)
         //{
-        //    float f = Random.Range(0, 1.0f);
-        //    Debug.Log(f);
-        //    if (f > 0.8f)
-        //    {
-        //        Instantiate(cube4, worm.wall[i], Quaternion.identity);
-        //    }
-        //    else
-        //    {
-        //        Instantiate(cube3, worm.wall[i], Quaternion.identity);
-        //    }
+        //    Instantiate(cube2, worm.pathRange[i], Quaternion.identity);
         //}
 
-
+        //for (int i = 0; i < worm.pathWall.Count; i++)
+        //{
+        //    Instantiate(cube3, worm.pathWall[i], Quaternion.identity);
+        //}
     }
 
     void Update()
