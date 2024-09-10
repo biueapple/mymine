@@ -109,7 +109,14 @@ public class World : MonoBehaviour
         Vector3Int chunkIndex = new(positionInt.x / BlockInfo.ChunkWidth, positionInt.y / BlockInfo.ChunkHeight, positionInt.z / BlockInfo.ChunkWidth);
         //그 청크의 범위에 해당되는 범위 찾기
         List<Chunk> active = GetChunkRangeIfCreate(chunkIndex, 2);
-        //활성화리스트 작성
+
+
+        //청크를 새로 그릴때 경계선에 있는 이미 그려져 있는 청크의 새 청크면이 그려져 있지 않다는 문제가 발생했기에
+        //새 청크를 그릴때 경계선에 있는 다른 청크들을 그려줘야 함
+        //새로 활성화될 후보들의 리스트
+        List<Chunk> draw = new();
+
+        //범위를 벗어난 청크는 비활성화
         for (int j = 0; j < activeChunks.Count; j++)
         {
             if (!active.Contains(activeChunks[j]))
@@ -118,13 +125,39 @@ public class World : MonoBehaviour
             }
         }
 
+        //범위 안에 있는 청크들을 활성화 해야하는데 일단 후보에만 올림
         for(int i = 0; i < active.Count; i++)
         {
             if (!activeChunks.Contains(active[i]))
             {
-                active[i].Active();
-                active[i].Draw();
+                draw.Add(active[i]);
+                //active[i].Active();
+                //active[i].Draw();
             }
+        }
+
+        //후보에 올린 리스트의 6면을 확인하면서 이미 활성화된 청크가 있다면 그리고 이미 리스트에 들어가 있지 않다면 추가해주자
+        //for문을 반대로 돌린 이유는 추가된 리스트는 확인하지 않기 위해
+        for(int i = draw.Count - 1; i >= 0; i--)
+        {
+            chunkIndex = new(draw[i].Position.x / BlockInfo.ChunkWidth, draw[i].Position.y / BlockInfo.ChunkHeight, draw[i].Position.z / BlockInfo.ChunkWidth);
+            for (int p = 0; p < BlockInfo.faceChecks.Length; p++)
+            {
+                if(chunks.TryGetValue(chunkIndex + BlockInfo.faceChecks[p], out Chunk value))
+                {
+                    if(value.Create && !draw.Contains(value))
+                    {
+                        draw.Add(value);
+                    }
+                }
+            }
+        }
+
+        //그릴 후보들을 전부 리스트에 넣었으니 그리기
+        for(int i = 0; i < draw.Count; i++)
+        {
+            draw[i].Active();
+            draw[i].Draw(); 
         }
 
         //청크 활성화
