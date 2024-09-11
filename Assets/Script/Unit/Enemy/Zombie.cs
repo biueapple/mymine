@@ -1,16 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
-public class Zombie : Unit
+public class Zombie : Enemy
 {
-    Pathfinder pathfinder;
     AutoMove autoMove;
     JumpInputMove jumpSystem;
-    DistanceDetection distanceDetection;
-    Player target;
-    Coroutine state;
+
     AttackModule attackModule;
     private Animator animator;
     public Animator Animator { get { return animator; } }
@@ -35,11 +31,10 @@ public class Zombie : Unit
 
         moveSystem.AddMoveMode(new WorldMovePhysicsShift(moveSystem.Machine, GetComponent<Unit>()));
 
-        distanceDetection = new DistanceDetection(transform, 10);
+        //distanceDetection = new DistanceDetection(transform, 10);
 
-        pathfinder = new Pathfinder(this);
+        //pathfinder = new Pathfinder(this);
 
-        state = StartCoroutine(Sensing());
 
         animator = GetComponent<Animator>();
 
@@ -50,52 +45,53 @@ public class Zombie : Unit
     // Update is called once per frame
     void Update()
     {
-        if(target != null)
-        {
-            if(Vector3.Distance(transform.position, target.transform.position) <= 1 && state != null)
-            {
-                StopCoroutine(state);
-                state = null;
-                StartCoroutine(Attack());
-            }
-            if(autoMove.Points != null && autoMove.Points.Count > 0)
-            {
-                Vector3 direction = autoMove.Points[0] - transform.position;
-                direction.y = 0; // Y축 회전을 제거
-                if(direction != Vector3.zero)
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = targetRotation;
-                }
-            }
-        }
+        state.Update();
+        //if(target != null)
+        //{
+        //    if(Vector3.Distance(transform.position, target.transform.position) <= 1 && state != null)
+        //    {
+        //        StopCoroutine(state);
+        //        state = null;
+        //        StartCoroutine(Attack());
+        //    }
+        //    if(autoMove.Points != null && autoMove.Points.Count > 0)
+        //    {
+        //        Vector3 direction = autoMove.Points[0] - transform.position;
+        //        direction.y = 0; // Y축 회전을 제거
+        //        if(direction != Vector3.zero)
+        //        {
+        //            Quaternion targetRotation = Quaternion.LookRotation(direction);
+        //            transform.rotation = targetRotation;
+        //        }
+        //    }
+        //}
     }
 
-    private IEnumerator Sensing()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(2); 
-            target = distanceDetection.Sensing(GameManager.Instance.Players);
+    //private IEnumerator Sensing()
+    //{
+    //    while (true)
+    //    {
+    //        yield return new WaitForSeconds(2); 
+    //        target = distanceDetection.Sensing(GameManager.Instance.Players);
 
-            if (target != null)
-            {
-                pathfinder.Finding(target.transform.position);
-                autoMove.SetTartget(pathfinder.Points);
-            }
-            else
-            {
-                //주위 랜덤한 위치로 이동
-            }
-        }
-    }
+    //        if (target != null)
+    //        {
+    //            pathfinder.Finding(target.transform.position);
+    //            autoMove.SetTartget(pathfinder.Points);
+    //        }
+    //        else
+    //        {
+    //            //주위 랜덤한 위치로 이동
+    //        }
+    //    }
+    //}
 
-    private IEnumerator Attack()
-    {
-        autoMove.SetTartget(null);
-        yield return new WaitForSeconds(1.2f);
-        attackModule.Attack();
-        yield return new WaitForSeconds(0.1f);
-        state = StartCoroutine(Sensing());
-    }
+    //private IEnumerator Attack()
+    //{
+    //    autoMove.SetTartget(null);
+    //    yield return new WaitForSeconds(1.2f);
+    //    attackModule.Attack();
+    //    yield return new WaitForSeconds(0.1f);
+    //    state = StartCoroutine(Sensing());
+    //}
 }

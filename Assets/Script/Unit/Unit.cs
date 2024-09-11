@@ -64,20 +64,20 @@ public class Unit : MonoBehaviour
     public virtual float Hit(AttackInformation attackInformation, Vector3 dir, float power)
     {
         Pushed(dir, power);
-        return stat.Be_Attacked(attackInformation);
+        return Hit(attackInformation);
     }
 
     public virtual float Hit(AttackInformation attackInformation, Color color)
     {
         Twinkle(color);
-        return stat.Be_Attacked(attackInformation);
+        return Hit(attackInformation);
     }
 
     public virtual float Hit(AttackInformation attackInformation, Vector3 dir, float power, Color color)
     {
         Pushed(dir, power);
         Twinkle(color);
-        return stat.Be_Attacked(attackInformation);
+        return Hit(attackInformation);
     }
 
     //
