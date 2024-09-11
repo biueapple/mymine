@@ -597,11 +597,9 @@ MonoBehaviour:
   height: 1
   width: 0.4
   depth: 0.4
-  pathfinder:
-    points: []
-  scarecrow: {fileID: 0}
-  jumpSystem:
-    jump: 0
+  level: 0
+  itemID: 01000000
+  amount: 0
 --- !u!114 &3474192465723185404
 MonoBehaviour:
   m_ObjectHideFlags: 0

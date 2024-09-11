@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //몬스터가 플레이어를 피하는 상태
-public class EnemyFleeState : MonoBehaviour
+public class EnemyFleeState : EnemyState
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Enter()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Exit()
     {
-        
+
+    }
+
+    public override void Update()
+    {
+
     }
 }

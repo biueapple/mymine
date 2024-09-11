@@ -6,17 +6,13 @@ using UnityEngine;
 public class EnemyChaseState : EnemyState
 {
     private Enemy enemy;
-    private Pathfinder pathfinder;
     private Player target;
-    private AutoMove autoMove;
     private Coroutine coroutine;
 
-    public EnemyChaseState(Enemy enemy, Pathfinder pathfinder, Player target, AutoMove autoMove)
+    public EnemyChaseState(Enemy enemy, Player target)
     {
         this.enemy = enemy;
-        this.pathfinder = pathfinder;
         this.target = target;
-        this.autoMove = autoMove;
     }
 
     public override void Enter()
@@ -32,7 +28,10 @@ public class EnemyChaseState : EnemyState
     public override void Update()
     {
         //거리가 가까워지면 적을 공격해야하니 상태 변화
-        //거리가 너무 멀어지면 적을 놓쳤으니 상태 변화
+        if(Vector3.Distance(enemy.transform.position, target.transform.position) <= 1)
+        {
+            enemy.ChangeState(new EnemyAttackState(enemy));
+        }
     }
 
     private IEnumerator Sensing()
@@ -40,14 +39,15 @@ public class EnemyChaseState : EnemyState
         while (true)
         {
             yield return new WaitForSeconds(2);
-            if(Vector3.Distance(enemy.transform.position, target.transform.position) >= 10)
+            //거리가 너무 멀어지면 적을 놓쳤으니 상태 변화
+            if (Vector3.Distance(enemy.transform.position, target.transform.position) >= 10)
             {
-                enemy.ChangeState(new EnemyPatrolState());
+                enemy.ChangeState(new EnemyPatrolState(enemy));
             }
             else
             {
-                pathfinder.Finding(target.transform.position);
-                autoMove.SetTartget(pathfinder.Points);
+                enemy.Pathfinder.Finding(target.transform.position);
+                enemy.AutoMove.SetTartget(enemy.Pathfinder.Points);
             }
         }
     }

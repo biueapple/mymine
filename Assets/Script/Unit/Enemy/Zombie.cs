@@ -4,68 +4,56 @@ using UnityEngine;
 
 public class Zombie : Enemy
 {
-    AutoMove autoMove;
-    JumpInputMove jumpSystem;
-
-    AttackModule attackModule;
     private Animator animator;
     public Animator Animator { get { return animator; } }
 
-    //근처에
-    //  적이 있다면
-    //      적을 향해 이동
-    //          충분히 가까우면 멈춰서 공격
-    //  없다면
-    //      주위 랜덤한 포인트로 이동
-    //
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
-        autoMove = new (this);
-        jumpSystem = new (moveSystem.Machine);
+        base.Start();
 
-        moveSystem.AddMoveMode(autoMove);
-        moveSystem.AddMoveMode(new AutoJump(jumpSystem, this)); 
-        
-        moveSystem.AddMoveMode(new GravityForce(moveSystem.Machine));
-
-        moveSystem.AddMoveMode(new WorldMovePhysicsShift(moveSystem.Machine, GetComponent<Unit>()));
-
-        //distanceDetection = new DistanceDetection(transform, 10);
-
-        //pathfinder = new Pathfinder(this);
-
+        attackModule.MotionAdd(new ZombieAttack(this));
 
         animator = GetComponent<Animator>();
-
-        attackModule = new AttackModule(1, STAT);
-        attackModule.MotionAdd(new ZombieAttack(this));
     }
 
     // Update is called once per frame
     void Update()
     {
         state.Update();
-        //if(target != null)
-        //{
-        //    if(Vector3.Distance(transform.position, target.transform.position) <= 1 && state != null)
-        //    {
-        //        StopCoroutine(state);
-        //        state = null;
-        //        StartCoroutine(Attack());
-        //    }
-        //    if(autoMove.Points != null && autoMove.Points.Count > 0)
-        //    {
-        //        Vector3 direction = autoMove.Points[0] - transform.position;
-        //        direction.y = 0; // Y축 회전을 제거
-        //        if(direction != Vector3.zero)
-        //        {
-        //            Quaternion targetRotation = Quaternion.LookRotation(direction);
-        //            transform.rotation = targetRotation;
-        //        }
-        //    }
-        //}
     }
+
+
+    protected override void Dead()
+    {
+        state.Exit();
+        gameObject.SetActive(false);
+    }
+
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //    state.Update();
+    //    //if(target != null)
+    //    //{
+    //    //    if(Vector3.Distance(transform.position, target.transform.position) <= 1 && state != null)
+    //    //    {
+    //    //        StopCoroutine(state);
+    //    //        state = null;
+    //    //        StartCoroutine(Attack());
+    //    //    }
+    //    //    if(autoMove.Points != null && autoMove.Points.Count > 0)
+    //    //    {
+    //    //        Vector3 direction = autoMove.Points[0] - transform.position;
+    //    //        direction.y = 0; // Y축 회전을 제거
+    //    //        if(direction != Vector3.zero)
+    //    //        {
+    //    //            Quaternion targetRotation = Quaternion.LookRotation(direction);
+    //    //            transform.rotation = targetRotation;
+    //    //        }
+    //    //    }
+    //    //}
+    //}
 
     //private IEnumerator Sensing()
     //{

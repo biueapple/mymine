@@ -30,16 +30,21 @@ public class FlowManager : MonoBehaviour
 
     public GroundItem DropItem(Vector3 position, int id, int amount, Vector3 dir)
     {
-        GroundItem item = ObjectPooling.Instance.CreateItem();
-        StartCoroutine(WatingTime(item));
-        item.transform.position = position;
-        item.ItemSculpture = new ItemSculpture(GameManager.Instance.GetItem(id), amount);
-        MoveSystem system = item.gameObject.AddComponent<MoveSystem>();
-        system.AddMoveMode(new GravityForce(system.Machine));
-        system.AddMoveMode(new WorldMovePhysicsShift(system.Machine, null));
-        system.AddExternalForcesGround(dir * 3);
+        Item item = GameManager.Instance.GetItem(id);
+        if (item != null)
+        {
+            GroundItem ground = ObjectPooling.Instance.CreateItem();
+            StartCoroutine(WatingTime(ground));
+            ground.transform.position = position;
+            ground.ItemSculpture = new ItemSculpture(item, amount);
+            MoveSystem system = ground.gameObject.AddComponent<MoveSystem>();
+            system.AddMoveMode(new GravityForce(system.Machine));
+            system.AddMoveMode(new WorldMovePhysicsShift(system.Machine, null));
+            system.AddExternalForcesGround(dir * 3);
 
-        return item;
+            return ground;
+        }
+        return null;
     }
 
     private IEnumerator WatingTime(GroundItem item)
