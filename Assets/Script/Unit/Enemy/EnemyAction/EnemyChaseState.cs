@@ -18,11 +18,13 @@ public class EnemyChaseState : EnemyState
     public override void Enter()
     {
         coroutine = GameManager.Instance.StartCoroutine(Sensing());
+        Debug.Log("추격 개시");
     }
 
     public override void Exit()
     {
         GameManager.Instance.StopCoroutine(coroutine);
+        Debug.Log("추격 종료");
     }
 
     public override void Update()
@@ -38,7 +40,6 @@ public class EnemyChaseState : EnemyState
     {
         while (true)
         {
-            yield return new WaitForSeconds(2);
             //거리가 너무 멀어지면 적을 놓쳤으니 상태 변화
             if (Vector3.Distance(enemy.transform.position, target.transform.position) >= 10)
             {
@@ -49,6 +50,7 @@ public class EnemyChaseState : EnemyState
                 enemy.Pathfinder.Finding(target.transform.position);
                 enemy.AutoMove.SetTartget(enemy.Pathfinder.Points);
             }
+            yield return new WaitForSeconds(2);
         }
     }
 }

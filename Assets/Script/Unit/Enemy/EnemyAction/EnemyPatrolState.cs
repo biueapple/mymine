@@ -6,8 +6,8 @@ using UnityEngine;
 public class EnemyPatrolState : EnemyState
 {
     private Enemy enemy;
-    private Player target;
-    private Coroutine coroutine;
+    private Coroutine sensing;
+    private Coroutine path;
     //일정한 주기로
     //주위의 위치를 하나 찍어서 그곳으로 이동
 
@@ -18,12 +18,16 @@ public class EnemyPatrolState : EnemyState
 
     public override void Enter()
     {
-        coroutine = GameManager.Instance.StartCoroutine(Sensing());
+        sensing = GameManager.Instance.StartCoroutine(Sensing());
+        path = GameManager.Instance.StartCoroutine(PathPoint());
+        Debug.Log("순찰 개시");
     }
 
     public override void Exit()
     {
-        GameManager.Instance.StopCoroutine(coroutine);
+        GameManager.Instance.StopCoroutine(sensing);
+        GameManager.Instance.StopCoroutine(path);
+        Debug.Log("순찰 종료");
     }
 
     public override void Update()
@@ -31,18 +35,60 @@ public class EnemyPatrolState : EnemyState
 
     }
 
+    //일정 주기로 주변 플레이어를 찾음
     private IEnumerator Sensing()
     {
         while (true)
         {
-            yield return new WaitForSeconds(2);
-            target = enemy.DistanceDetection.Sensing(GameManager.Instance.Players);
+            Player target = enemy.DistanceDetection.Sensing(GameManager.Instance.Players);
 
             if (target != null)
             {
                 //상태 변화
                 enemy.ChangeState(new EnemyChaseState(enemy, target));
             }
+            yield return new WaitForSeconds(2);
         }
+    }
+
+    //일정 주기로 주변 위치로 이동
+    private IEnumerator PathPoint()
+    {
+        while(true)
+        {
+            //주위에 갈 수 있는 칸을 찾아 길찾기 경로에 넣어주기
+
+            int x = 0;
+            int y = 0;
+            int z = 0;
+            //일단 10번만 반복
+            for (int i = 0; i < 10; i++)
+            {
+                x = Random.Range(-4, 5);
+                z = Random.Range(-4, 5);
+                y = BlockCheck(x, z);
+                if (y != -10)
+                {
+                    break;
+                }
+            }
+
+            enemy.Pathfinder.Finding(enemy.transform.position + new Vector3(x, y, z));
+            enemy.AutoMove.SetTartget(enemy.Pathfinder.Points);
+
+            yield return new WaitForSeconds(5);
+        }
+    }
+
+    private int BlockCheck(int x, int z)
+    {
+        for (int y = (int)enemy.transform.position.y - 5; y < (int)enemy.transform.position.y + 5; y++)
+        {
+            if (GameManager.Instance.Empty(enemy, enemy.transform.position + new Vector3(x, y, z)))
+            {
+                return y;
+            }
+        }
+        return -10;
     }
 }

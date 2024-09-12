@@ -137,7 +137,75 @@ public class GameManager : MonoBehaviour
         //월드가 플레이어 감지 (없어도 월드 생성하면 감지 시작함)
     }
 
+    //
 
+    /// <summary>
+    /// 유닛이 어떤 위치에 갈 수 있는지
+    /// </summary>
+    /// <param name="unit">유닛</param>
+    /// <param name="position">위치</param>
+    /// <returns></returns>
+    public bool Empty(Unit unit, Vector3 position)
+    {
+        //남은 거리
+        float distanceX = unit.Width * 2;
+        //최종 추가되는 값
+        float width = -unit.Width;
+        //현재 얼마나 추가됬는지
+        float measureX;
+
+        //x축
+        while (true)
+        {
+            float distanceY = unit.Height;
+            float height = 0;
+            float measureY;
+            //y축
+            while (true)
+            {
+                float distanceZ = unit.Depth * 2;
+                float depth = -unit.Depth;
+                float measureZ;
+                //z축
+                while (true)
+                {
+                    //충돌계산
+                    if (World.Instance.WorldBlockPositionSolid(new Vector3(position.x + width, position.y + height, position.z + depth)))
+                    {
+                        return false;
+                    }
+                    //남은 거리가 없다면
+                    if (distanceZ <= 0)
+                    {
+                        break;
+                    }
+                    //남은 거리 줄이기
+                    measureZ = Mathf.Min(1, distanceZ);
+                    depth += measureZ;
+                    distanceZ -= measureZ;
+                }
+
+                if (distanceY <= 0)
+                {
+                    break;
+                }
+
+                measureY = Mathf.Min(1, distanceY);
+                height += measureY;
+                distanceY -= measureY;
+            }
+
+            if (distanceX <= 0)
+            {
+                break;
+            }
+
+            measureX = Mathf.Min(1, distanceX);
+            width += measureX;
+            distanceX -= measureX;
+        }
+        return true;
+    }
 
 
     //

@@ -23,11 +23,13 @@ public class EnemyAttackState : EnemyState
         //공격에 대한 판정도 attackmodule이 해줌
         //후에 다음 어떤 상태가 되어야 하는지 판단
         coroutine = GameManager.Instance.StartCoroutine(Attack());
+        Debug.Log("공격 개시");
     }
 
     public override void Exit()
     {
         GameManager.Instance.StopCoroutine(coroutine);
+        Debug.Log("공격 종료");
     }
 
     public override void Update()
