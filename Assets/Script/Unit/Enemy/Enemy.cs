@@ -21,6 +21,7 @@ public abstract class Enemy : Unit
     //
     protected Pathfinder pathfinder;
     public Pathfinder Pathfinder { get { return pathfinder; } }
+    [SerializeField]
     protected AutoMove autoMove;
     public AutoMove AutoMove { get { return autoMove; } }
     protected DistanceDetection distanceDetection;
@@ -29,7 +30,7 @@ public abstract class Enemy : Unit
     JumpInputMove jumpSystem;
     protected void Start()
     {
-        autoMove = new(this);
+        autoMove = new(this, substances[0].transform);
         jumpSystem = new(moveSystem.Machine);
 
         moveSystem.AddMoveMode(autoMove);

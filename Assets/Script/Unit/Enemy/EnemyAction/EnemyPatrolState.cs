@@ -25,8 +25,10 @@ public class EnemyPatrolState : EnemyState
 
     public override void Exit()
     {
-        GameManager.Instance.StopCoroutine(sensing);
-        GameManager.Instance.StopCoroutine(path);
+        if (sensing != null)
+            GameManager.Instance.StopCoroutine(sensing);
+        if(path != null)
+            GameManager.Instance.StopCoroutine(path);
         Debug.Log("¼øÂû Á¾·á");
     }
 

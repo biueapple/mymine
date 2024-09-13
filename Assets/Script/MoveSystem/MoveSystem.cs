@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -409,15 +410,25 @@ public class AutoJump : IInputMove
         return true;
     }
 }
+[System.Serializable]
 public class AutoMove : IInputMove
 {
-    readonly Unit unit;
-    List<Vector3> points;
+    [SerializeField]
+    private readonly Unit unit;
+    private Transform transform;
+    public Transform Transform { get { return transform; } set { transform = value; } }
+    [SerializeField]
+    private List<Vector3> points;
     public List<Vector3> Points { get { return points; } }
 
     public AutoMove(Unit unit)
     {
         this.unit = unit;
+    }
+    public AutoMove(Unit unit, Transform transform)
+    {
+        this.unit = unit;
+        this.transform = transform;
     }
 
     public void SetTartget(List<Vector3> points)
@@ -429,7 +440,18 @@ public class AutoMove : IInputMove
     {
         if(points != null && points.Count > 0)
         {
-            if (Vector3.Distance(unit.transform.position, points[0]) < 0.2f)
+            if(transform != null)
+            {
+                Vector3 direction = points[0] - transform.position;
+                direction.y = 0; // Y축 회전을 제거
+                if (direction != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = targetRotation;
+                }
+            }
+            
+            if (Vector3.Distance(unit.transform.position, points[0]) < 0.5f)
             {
                 points.RemoveAt(0);
             }

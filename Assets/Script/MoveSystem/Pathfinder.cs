@@ -23,7 +23,7 @@ public class Pathfinder
         List<NODE> open = new();
         points.Clear ();
 
-        open.Add(new NODE((unit.transform.position), -1));
+        open.Add(new NODE(new Vector3Int(Mathf.FloorToInt(unit.transform.position.x) , Mathf.FloorToInt(unit.transform.position.y), Mathf.FloorToInt(unit.transform.position.z)), -1));
         //12곳만 확인
         //y값이 똑같은 주위와
         //y값이 1 높은 주위
@@ -169,6 +169,7 @@ public class Pathfinder
         }
 
         points.Reverse();
+        points[0] = unit.transform.position;
         Debug.Log("길찾기 종료");
     }
 
