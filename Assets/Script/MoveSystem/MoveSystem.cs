@@ -352,7 +352,7 @@ public class AutoJump : IInputMove
 
     public void InputMove(Transform transform, ref Vector3 velocity, ref Vector3 velocityMomemtum)
     {
-        Vector3 dir = new Vector3(velocity.x, 0, velocity.z);
+        Vector3 dir = new (velocity.x, 0, velocity.z);
 
         if (inputMove.Machine.isGround)
             inputMove.isJump = false;
@@ -458,7 +458,7 @@ public class AutoMove : IInputMove
             else
             {
                 Vector3 vectpr = (points[0] - unit.transform.position);
-                velocity = new Vector3(vectpr.x, 0, vectpr.z).normalized * Time.deltaTime * unit.STAT.Speed;
+                velocity = Time.deltaTime * unit.STAT.Speed * new Vector3(vectpr.x, 0, vectpr.z).normalized;
             }
         }
     }

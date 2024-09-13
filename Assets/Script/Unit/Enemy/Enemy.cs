@@ -28,6 +28,10 @@ public abstract class Enemy : Unit
     public DistanceDetection DistanceDetection { get {  return distanceDetection; } }
 
     JumpInputMove jumpSystem;
+
+    public abstract Transform Head { get; }
+    public abstract Transform Body { get; }
+
     protected void Start()
     {
         autoMove = new(this, substances[0].transform);
@@ -49,13 +53,11 @@ public abstract class Enemy : Unit
 
     public void ChangeState(EnemyState _state)
     {
-        if(state != null)
-            state.Exit();
+        state?.Exit();
 
         state = _state;
 
-        if (state != null)
-            state.Enter();
+        state?.Enter();
     }
 
     public override float Hit(AttackInformation attackInformation)

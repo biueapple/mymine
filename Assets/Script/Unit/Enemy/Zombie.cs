@@ -7,6 +7,10 @@ public class Zombie : Enemy
     private Animator animator;
     public Animator Animator { get { return animator; } }
 
+    public override Transform Head => substances[1].transform;
+
+    public override Transform Body => substances[0].transform;
+
     // Start is called before the first frame update
     new void Start()
     {
