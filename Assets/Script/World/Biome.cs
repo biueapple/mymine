@@ -54,6 +54,57 @@ public class Biome : ScriptableObject
     [SerializeField] 
     private Underground[] undergrounds;
 
+    private readonly Vector3Int[] plus = new Vector3Int[7]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(-1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(0,-1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(0,0,-1)
+    };
+
+    private readonly Vector3Int[] chair = new Vector3Int[6]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(1,1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(1,0,1)
+    };
+    public Vector3Int[] Chair(Vector3Int dir)
+    {
+        if(dir == Vector3Int.back)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(0, 0, -1) + chair[i];
+            }
+            return c;
+        }
+        else if(dir == Vector3Int.down)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(0, -1, 0) + chair[i];
+            }
+            return c;
+        }
+        else if(dir == Vector3Int.left)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(-1, 0, 0) + chair[i];
+            }
+            return c;
+        }
+        return chair;
+    }
 
     public int Height(int x, int z)
     {
@@ -232,16 +283,26 @@ public class Biome : ScriptableObject
                     {
                         if (Random.Range(0, 1f) > 0.99f)
                         {
-                            if ((worm.pathWall[i].x + x >= 0 && worm.pathWall[i].x + x < BlockInfo.ChunkWidth) &&
-                                (worm.pathWall[i].y + yHeight >= 0 && worm.pathWall[i].y + yHeight < BlockInfo.ChunkHeight) &&
-                                (worm.pathWall[i].z + z >= 0 && worm.pathWall[i].z + z < BlockInfo.ChunkWidth))
+                            //광물이 설치될 모양을 선택
+                            //일단은 chair로 고정
+
+                            Vector3Int[] c = Chair(worm.pathWall[i].dir);
+                            for (int index = 0; index < c.Length;  index++)
                             {
-                                map[worm.pathWall[i].x + x, worm.pathWall[i].y + yHeight, worm.pathWall[i].z + z] = (int)GameManager.BLCOK_ENUM.CoalOre;
-                            }
-                            else
-                            {
-                                worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-                                orders.Add(new BlockOrder(worldPosition + worm.pathWall[i], (int)GameManager.BLCOK_ENUM.CoalOre));
+                                //방향도 설정해야 함
+                                if ((worm.pathWall[i].position.x + x + c[index].x >= 0 && worm.pathWall[i].position.x + x + c[index].x < BlockInfo.ChunkWidth) &&
+                                (worm.pathWall[i].position.y + yHeight + c[index].y >= 0 && worm.pathWall[i].position.y + yHeight + c[index].y < BlockInfo.ChunkHeight) &&
+                                (worm.pathWall[i].position.z + z + c[index].z >= 0 && worm.pathWall[i].position.z + z + c[index].z < BlockInfo.ChunkWidth))
+                                {
+                                    //자신의 청크 범위 안
+                                    map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + yHeight + c[index].y, worm.pathWall[i].position.z + z + c[index].z] = (int)GameManager.BLCOK_ENUM.CoalOre;
+                                }
+                                else
+                                {
+                                    //자신의 청크 범위 밖
+                                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+                                    orders.Add(new BlockOrder(worldPosition + worm.pathWall[i].position + c[index], (int)GameManager.BLCOK_ENUM.CoalOre));
+                                }
                             }
                         }
                     }
@@ -251,10 +312,10 @@ public class Biome : ScriptableObject
         World.Instance.BiomeCallEdit(orders);
     }
 
-    public void CreateMineral(Chunk chunk, ref int[,,] map)
-    {
-        //만들어진 동굴에 광물 넣기
-    }
+    //public void CreateMineral(Chunk chunk, ref int[,,] map)
+    //{
+    //    //만들어진 동굴에 광물 넣기
+    //}
 }
 
 
@@ -386,11 +447,6 @@ public class Underground
         }
 
         return false;
-    }
-
-    public BlockOrder CreateUnderground(Vector3Int world)
-    {
-        return new BlockOrder(world, type);
     }
 }
 

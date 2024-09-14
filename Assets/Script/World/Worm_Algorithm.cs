@@ -9,8 +9,7 @@ public class Worm_Algorithm
     public static Worm_Algorithm Instance 
     { get 
         {
-            if (instance == null)
-                instance = new Worm_Algorithm();
+            instance ??= new Worm_Algorithm();
             return instance;
         } 
     }
@@ -27,7 +26,7 @@ public class Worm_Algorithm
 
     public Worm Start(List<(Vector3Int, int)> dir, Vector3Int size, int length)
     {
-        Worm worm = new Worm(length, size.x, size.y, size.z, dir);
+        Worm worm = new (length, size.x, size.y, size.z, dir);
         
         worm.Start();
 
@@ -50,13 +49,13 @@ public class Worm
     //나의 범위 안에 vector값들
     public List<Vector3Int> range = new();
     //나의 범위의 벽의 위치들
-    public List<Vector3Int> wall = new ();
+    public List<(Vector3Int position, Vector3Int dir)> wall = new ();
     //나의 경로
     public List<Vector3Int> path = new() ;
     //나의 경로의 범위값들
     public List<Vector3Int> pathRange = new();
     //나의 경로의 벽의 값들
-    public List<Vector3Int> pathWall = new() ;
+    public List<(Vector3Int position, Vector3Int dir)> pathWall = new() ;
 
     public Worm(int length, int w, int h, int d, List<(Vector3Int, int)> values)
     {
@@ -93,25 +92,33 @@ public class Worm
 
     private void Cutting()
     {
+        //벌레가 지나간 길
         for(int i = 0; i < path.Count; i++)
         {
+            //벌레가 지나간 길을 벌레의 범위만큼
             for(int r = 0; r < range.Count; r++)
             {
+                //중복 방지
                 if (!pathRange.Contains(path[i] + range[r]))
                 {
+                    //벌레의 범위 안에 있는 위치
                     pathRange.Add(path[i] + range[r]);
                 }
-                if (pathWall.Contains(path[i] + range[r]))
+                //벌레가 지나간길 + 범위에 해당되면 벽이 될 수 없기에 만약 벽위치 list에 있다면 지우기
+                if (pathWall.Select(x => x.position).Contains(path[i] + range[r]))
                 {
-                    pathWall.Remove(path[i] + range[r]);
+                    //pathWall.Remove(path[i] + range[r]);
+                    pathWall.Remove(pathWall.Find(x => x.position == path[i] + range[r]));
                 }
             }
 
+            //벽 위치들을 넣기
             for (int w = 0; w < wall.Count; w++)
             {
-                if (!pathWall.Contains(path[i] + wall[w]) && !pathRange.Contains(path[i] + wall[w]))
+                //중복방지 && 벌레의 길에 해당되면 벽이 아님
+                if (!pathWall.Select(x => x.position).Contains(path[i] + wall[w].position) && !pathRange.Contains(path[i] + wall[w].position))
                 {
-                    pathWall.Add(path[i] + wall[w]);
+                    pathWall.Add((path[i] + wall[w].position, wall[w].dir));
                 } 
             }
         }
@@ -135,8 +142,10 @@ public class Worm
         return Vector3Int.zero;
     }
 
+    //범위 설정
     private void Init()
     {
+        //벌레의 크기에 해당되는 범위들을 설정
         for (int x = -w + 1; x < w; x++)
         {
             for (int y = -h + 1; y < h; y++)
@@ -148,18 +157,22 @@ public class Worm
             }
         }
 
+        //벌레의 크기에 해당되는 벽 위치들 설정
         Vector3Int position;
+        Vector3Int dir;
         for(int x = -w; x < w + 1; x++)
         {
             for(int y = -h;  y < h + 1; y++)
             {
                 position = new Vector3Int(x, y, -d);
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                dir = new Vector3Int(0, 0, -1);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
 
-                position = new Vector3Int(x, y, d); 
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                position = new Vector3Int(x, y, d);
+                dir = new Vector3Int(0, 0, 1);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
             }
         }
 
@@ -168,12 +181,14 @@ public class Worm
             for (int y = -h; y < h + 1; y++)
             {
                 position = new Vector3Int(-w, y, z);
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                dir = new Vector3Int(-1, 0, 0);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
 
                 position = new Vector3Int(w, y, z);
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                dir = new Vector3Int(1, 0, 0);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
             }
         }
 
@@ -182,12 +197,14 @@ public class Worm
             for (int z = -d; z < d + 1; z++)
             {
                 position = new Vector3Int(-w, -h, z);
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                dir = new Vector3Int(0, -1, 0);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
 
                 position = new Vector3Int(w, -h, z);
-                if (!wall.Contains(position))
-                    wall.Add(position);
+                dir = new Vector3Int(0, 1, 0);
+                if (!wall.Contains((position, dir)))
+                    wall.Add((position, dir));
             }
         }
     }

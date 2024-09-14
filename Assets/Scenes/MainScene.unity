@@ -475,7 +475,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &416846268
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3308,6 +3308,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 422592297408725959, guid: d486bb07fdb6dca4c9386c59d144d7ee,
+        type: 3}
+      propertyPath: level
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 588908048951750291, guid: d486bb07fdb6dca4c9386c59d144d7ee,
         type: 3}
       propertyPath: m_RootOrder

@@ -121,7 +121,7 @@ public class PlayerInputStateBattle : IPlayerInputSystem
         }
         for(int i = 0; i < MonsterInformation.Instance.List.Count; i++)
         {
-            MonsterInformation.Instance.List[i].rect.position = player.Camera.WorldToScreenPoint(MonsterInformation.Instance.List[i].enemy.transform.position + new Vector3(0, MonsterInformation.Instance.List[i].enemy.Height, 0));
+            MonsterInformation.Instance.List[i].rect.position = player.Camera.WorldToScreenPoint(MonsterInformation.Instance.List[i].enemy.transform.position + new Vector3(0, MonsterInformation.Instance.List[i].enemy.Height + 0.1f, 0));
         }
     }
 
