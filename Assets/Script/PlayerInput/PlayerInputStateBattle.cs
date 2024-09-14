@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerInputStateBattle : IPlayerInputSystem
@@ -16,6 +17,8 @@ public class PlayerInputStateBattle : IPlayerInputSystem
     private AttackMotionInterface attackmotionInterface;
     public AttackMotionInterface AttackMotionInterace { get { return attackmotionInterface; } }
 
+    private Rect rect;
+
     public PlayerInputStateBattle(Player player, EquipmentSystem equipmentSystem, AttackMotionInterface attackMotionInterface)
     {
         this.player = player;
@@ -31,6 +34,11 @@ public class PlayerInputStateBattle : IPlayerInputSystem
         attackMotionTree = new AttackMotionTree(player);
         attackmotionInterface = attackMotionInterface;
         attackmotionInterface.Init(attackMotionTree);
+
+        rect.width = Screen.width;
+        rect.height = Screen.height;
+
+        sight = new Sight(player.Camera, rect);
     }
 
     public void LeftClick()
@@ -66,6 +74,7 @@ public class PlayerInputStateBattle : IPlayerInputSystem
 
     }
 
+    Sight sight;
     public void Update()
     {
         if(Input.GetKeyDown(KeyCode.L))
@@ -79,6 +88,40 @@ public class PlayerInputStateBattle : IPlayerInputSystem
             {
                 UIManager.Instance.OpenUI(attackmotionInterface.gameObject);
             }
+        }
+
+        //적을 찾아서 화면에 표시해주기
+        sight.SightOn();
+        //현재 보이는 것들중에서 적만 가지고
+        List<Enemy> enemyList = new List<Enemy>();
+        for(int i = 0; i < sight.Values.Count; i++)
+        {
+            if (sight.Values[i].enemy.Unit is Enemy enemy)
+            {
+                if(!enemyList.Contains(enemy))
+                    enemyList.Add(enemy);
+            }
+        }
+
+        //새 리스트에 포함되지 않은 녀석은 화면 밖으로 나간 녀석
+        for(int i = MonsterInformation.Instance.List.Count - 1; i >= 0; i--)
+        {
+            if (!enemyList.Contains(MonsterInformation.Instance.List[i].enemy))
+            {
+                MonsterInformation.Instance.CloseMonsterInfo(MonsterInformation.Instance.List[i].enemy);
+            }
+        }
+        //이미 보여주고 있는 리스트에 없다면 화면 안으로 들어온 녀석
+        for (int i = 0; i < enemyList.Count; i++)
+        {
+            if (!MonsterInformation.Instance.List.Select(x => x.enemy).Contains(enemyList[i]))
+            {
+                MonsterInformation.Instance.OpenMonsterInfo(enemyList[i]);
+            }
+        }
+        for(int i = 0; i < MonsterInformation.Instance.List.Count; i++)
+        {
+            MonsterInformation.Instance.List[i].rect.position = player.Camera.WorldToScreenPoint(MonsterInformation.Instance.List[i].enemy.transform.position + new Vector3(0, MonsterInformation.Instance.List[i].enemy.Height, 0));
         }
     }
 

@@ -8,10 +8,12 @@ public class StatBar : MonoBehaviour
 {
     [SerializeField]
     private Stat stat;
+    public Stat Stat { get { return stat; } set { stat = value; } }
     [SerializeField]
     private Image bar;
     [SerializeField]
     private Attribute_Property property;
+    public Attribute_Property Property { get { return property; } set { property = value; } }
 
     public void Interlock(Stat stat)
     {

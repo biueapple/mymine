@@ -93,7 +93,7 @@ public class PlayerInputStateAming : IPlayerInputSystem
         for (int i = 0; i < substances.Length; i++)
         {
             Vector3 screenPosition = WorldToCamera(substances[i].transform.position);
-            if (rect.Contains(screenPosition))
+            if (screenPosition.z > 0 && rect.Contains(screenPosition))
             {
                 float distance = Vector2.Distance(screenPosition, new Vector2(rect.x, rect.y));
                 preliminary.Add((substances[i], distance));
