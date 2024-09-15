@@ -40,10 +40,6 @@ public class Biome : ScriptableObject
     [SerializeField] 
     private float scaleHeight = 0.5f;
 
-    [Header("동굴이 있는 지형인지 (아직 미구현)")]
-    [SerializeField] 
-    private bool cave;
-
     [Header("위에 있을수록 우선적 {겹칠경우 위에있는게 생성됨}")]
 
     [Header("나무에 대한 정보들")]
@@ -53,6 +49,9 @@ public class Biome : ScriptableObject
     [Header("땅속에 확률적으로 있는 블록들")]
     [SerializeField] 
     private Underground[] undergrounds;
+
+    [SerializeField]
+    private CavePlacement cavePlacement;
 
     private readonly Vector3Int[] plus = new Vector3Int[7]
     {
@@ -159,14 +158,15 @@ public class Biome : ScriptableObject
                         //그 이외
                         else
                             map[x, y, z] = nomalType;
-                    }
 
-                    //지하 만들기
-                    for (int i = undergrounds.Length - 1; i >= 0; i--)
-                    {
-                        if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+
+                        //지하 만들기
+                        for (int i = undergrounds.Length - 1; i >= 0; i--)
                         {
-                            map[x, y, z] = undergrounds[i].type;
+                            if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+                            {
+                                map[x, y, z] = undergrounds[i].type;
+                            }
                         }
                     }
                 }
@@ -181,10 +181,18 @@ public class Biome : ScriptableObject
                 }
 
                 //동굴 만들기
-                if (Random.Range(0, 1f) > 0.999f)
+                if(cavePlacement != null)
                 {
-                    CreateCave(x, yHeight, z, chunk, ref map);
+                    if(Random.Range(0f, 1f) <= cavePlacement.probability)
+                    {
+                        CreateCave(x, yHeight, z, chunk, ref map);
+                    }
+                    //if (Random.Range(0, 1f) > 0.999f)
+                    //{
+                    //    CreateCave(x, yHeight, z, chunk, ref map);
+                    //}
                 }
+                
             }
         }
     }
@@ -203,52 +211,52 @@ public class Biome : ScriptableObject
         chunk.wait.Clear();
     }
 
-    public void CreateUnderground(Chunk chunk, ref int[,,] map)
-    {
-        //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-        //{
-        //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-        //    {
-        //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-        //        for (int y = 0; y < BlockInfo.ChunkHeight; y++)
-        //        {
-        //            for (int i = undergrounds.Length - 1; i >= 0; i--)
-        //            {
-        //                if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-        //                {
-        //                    map[x, y, z] = undergrounds[i].type;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-    }
+    //public void CreateUnderground(Chunk chunk, ref int[,,] map)
+    //{
+    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
+    //    //{
+    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
+    //    //    {
+    //    //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
+    //    //        for (int y = 0; y < BlockInfo.ChunkHeight; y++)
+    //    //        {
+    //    //            for (int i = undergrounds.Length - 1; i >= 0; i--)
+    //    //            {
+    //    //                if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+    //    //                {
+    //    //                    map[x, y, z] = undergrounds[i].type;
+    //    //                }
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //}
 
-    //나무 심기
-    public void CreateTreeMap(Chunk chunk, ref int[,,] map)
-    {
-        //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-        //{
-        //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-        //    {
-        //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-        //        for (int i = treePlacements.Length - 1; i >= 0; i--)
-        //        {
-        //            if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
-        //            {
-        //                CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
-        //            }
-        //        }
-        //    }
-        //}
-    }
+    ////나무 심기
+    //public void CreateTreeMap(Chunk chunk, ref int[,,] map)
+    //{
+    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
+    //    //{
+    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
+    //    //    {
+    //    //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
+    //    //        for (int i = treePlacements.Length - 1; i >= 0; i--)
+    //    //        {
+    //    //            if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
+    //    //            {
+    //    //                CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //}
 
     private void CreateTreeMapWorld(Chunk chunk, ref int[,,] map, List<BlockOrder> orders)
     {
         //여기서 들어오는 orders에는 음수나 길이를 벗어난 위치의 값이 있을 수 있는데 그 경우 다른 청크에 값을 넘겨야 함
         //만약 이미 만들어진 청크라면 값을 변경만 하고 
         //만들어지지 않은 청크라면 wait에 값을 넣어놓기
-        for(int i = orders.Count - 1; i >= 0;i--)
+        for (int i = orders.Count - 1; i >= 0; i--)
         {
             if ((orders[i].local.x >= 0 && orders[i].local.x < BlockInfo.ChunkWidth) &&
                (orders[i].local.y >= 0 && orders[i].local.y < BlockInfo.ChunkHeight) &&
@@ -262,8 +270,8 @@ public class Biome : ScriptableObject
             else
             {
                 //청크 범위 밖이면 월드에게 줘야하니 포지션을 월드로 바꿈
-                orders[i].local += chunk.Position; 
-            }    
+                orders[i].local += chunk.Position;
+            }
         }
 
         //청크의 범위 밖
@@ -271,77 +279,82 @@ public class Biome : ScriptableObject
         World.Instance.BiomeCallEdit(orders);
     }
 
-    public void CreateCave(Chunk chunk, ref int[,,] map)
-    {
-        ////땅 에서 랜덤으로 동굴 만들기
+    //public void CreateCave(Chunk chunk, ref int[,,] map)
+    //{
+    //    ////땅 에서 랜덤으로 동굴 만들기
 
-        ////일단은 땅 위에서만 만들기로
+    //    ////일단은 땅 위에서만 만들기로
 
-        //Vector3Int worldPosition;
-        //List<BlockOrder> orders = new();
-        //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-        //{
-        //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-        //    {
-        //        if (Random.Range(0, 1f) > 0.999f)
-        //        {
-        //            int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-        //            Worm worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
+    //    //Vector3Int worldPosition;
+    //    //List<BlockOrder> orders = new();
+    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
+    //    //{
+    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
+    //    //    {
+    //    //        if (Random.Range(0, 1f) > 0.999f)
+    //    //        {
+    //    //            int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
+    //    //            Worm worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
 
-        //            for (int i = 0; i < worm.pathRange.Count; i++)
-        //            {
-        //                if ((worm.pathRange[i].x + x >= 0 && worm.pathRange[i].x + x < BlockInfo.ChunkWidth) &&
-        //                    (worm.pathRange[i].y + yHeight >= 0 && worm.pathRange[i].y + yHeight < BlockInfo.ChunkHeight) &&
-        //                    (worm.pathRange[i].z + z >= 0 && worm.pathRange[i].z + z < BlockInfo.ChunkWidth))
-        //                {
-        //                    map[worm.pathRange[i].x + x, worm.pathRange[i].y + yHeight, worm.pathRange[i].z + z] = 0;
-        //                }
-        //                else
-        //                {
-        //                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-        //                    orders.Add(new BlockOrder(worldPosition + worm.pathRange[i], 0));
-        //                }
-        //            }
+    //    //            for (int i = 0; i < worm.pathRange.Count; i++)
+    //    //            {
+    //    //                if ((worm.pathRange[i].x + x >= 0 && worm.pathRange[i].x + x < BlockInfo.ChunkWidth) &&
+    //    //                    (worm.pathRange[i].y + yHeight >= 0 && worm.pathRange[i].y + yHeight < BlockInfo.ChunkHeight) &&
+    //    //                    (worm.pathRange[i].z + z >= 0 && worm.pathRange[i].z + z < BlockInfo.ChunkWidth))
+    //    //                {
+    //    //                    map[worm.pathRange[i].x + x, worm.pathRange[i].y + yHeight, worm.pathRange[i].z + z] = 0;
+    //    //                }
+    //    //                else
+    //    //                {
+    //    //                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+    //    //                    orders.Add(new BlockOrder(worldPosition + worm.pathRange[i], 0));
+    //    //                }
+    //    //            }
 
-        //            for (int i = 0; i < worm.pathWall.Count; i++)
-        //            {
-        //                if (Random.Range(0, 1f) > 0.99f)
-        //                {
-        //                    //광물이 설치될 모양을 선택
-        //                    //일단은 chair로 고정
+    //    //            for (int i = 0; i < worm.pathWall.Count; i++)
+    //    //            {
+    //    //                if (Random.Range(0, 1f) > 0.99f)
+    //    //                {
+    //    //                    //광물이 설치될 모양을 선택
+    //    //                    //일단은 chair로 고정
 
-        //                    Vector3Int[] c = Chair(worm.pathWall[i].dir);
-        //                    for (int index = 0; index < c.Length;  index++)
-        //                    {
-        //                        //방향도 설정해야 함
-        //                        if ((worm.pathWall[i].position.x + x + c[index].x >= 0 && worm.pathWall[i].position.x + x + c[index].x < BlockInfo.ChunkWidth) &&
-        //                        (worm.pathWall[i].position.y + yHeight + c[index].y >= 0 && worm.pathWall[i].position.y + yHeight + c[index].y < BlockInfo.ChunkHeight) &&
-        //                        (worm.pathWall[i].position.z + z + c[index].z >= 0 && worm.pathWall[i].position.z + z + c[index].z < BlockInfo.ChunkWidth))
-        //                        {
-        //                            //자신의 청크 범위 안
-        //                            map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + yHeight + c[index].y, worm.pathWall[i].position.z + z + c[index].z] = (int)GameManager.BLCOK_ENUM.CoalOre;
-        //                        }
-        //                        else
-        //                        {
-        //                            //자신의 청크 범위 밖
-        //                            worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-        //                            orders.Add(new BlockOrder(worldPosition + worm.pathWall[i].position + c[index], (int)GameManager.BLCOK_ENUM.CoalOre));
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        //World.Instance.BiomeCallEdit(orders);
-    }
+    //    //                    Vector3Int[] c = Chair(worm.pathWall[i].dir);
+    //    //                    for (int index = 0; index < c.Length;  index++)
+    //    //                    {
+    //    //                        //방향도 설정해야 함
+    //    //                        if ((worm.pathWall[i].position.x + x + c[index].x >= 0 && worm.pathWall[i].position.x + x + c[index].x < BlockInfo.ChunkWidth) &&
+    //    //                        (worm.pathWall[i].position.y + yHeight + c[index].y >= 0 && worm.pathWall[i].position.y + yHeight + c[index].y < BlockInfo.ChunkHeight) &&
+    //    //                        (worm.pathWall[i].position.z + z + c[index].z >= 0 && worm.pathWall[i].position.z + z + c[index].z < BlockInfo.ChunkWidth))
+    //    //                        {
+    //    //                            //자신의 청크 범위 안
+    //    //                            map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + yHeight + c[index].y, worm.pathWall[i].position.z + z + c[index].z] = (int)GameManager.BLCOK_ENUM.CoalOre;
+    //    //                        }
+    //    //                        else
+    //    //                        {
+    //    //                            //자신의 청크 범위 밖
+    //    //                            worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
+    //    //                            orders.Add(new BlockOrder(worldPosition + worm.pathWall[i].position + c[index], (int)GameManager.BLCOK_ENUM.CoalOre));
+    //    //                        }
+    //    //                    }
+    //    //                }
+    //    //            }
+    //    //        }
+    //    //    }
+    //    //}
+    //    //World.Instance.BiomeCallEdit(orders);
+    //}
 
-    public void CreateCave(int x,int y,int z, Chunk chunk, ref int[,,] map)
+    public void CreateCave(int x, int y, int z, Chunk chunk, ref int[,,] map)
     {
         Vector3Int worldPosition;
         List<BlockOrder> orders = new();
-        Worm worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
+        Worm worm;
+        if (cavePlacement.dir.Count == 0)
+            worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
+        else
+            worm = Worm_Algorithm.Instance.Start(cavePlacement.Dir(), cavePlacement.size, cavePlacement.lenght);
 
+        //땅을 파는 단계
         for (int i = 0; i < worm.pathRange.Count; i++)
         {
             if ((worm.pathRange[i].x + x >= 0 && worm.pathRange[i].x + x < BlockInfo.ChunkWidth) &&
@@ -362,6 +375,7 @@ public class Biome : ScriptableObject
             }
         }
 
+        //광물 만드는 단계 (광물을 만드는 단계는 동굴을 만드는 것과는 별계의 확률로 독자적임)
         for (int i = 0; i < worm.pathWall.Count; i++)
         {
             if (Random.Range(0, 1f) > 0.99f)
@@ -399,7 +413,7 @@ public class Biome : ScriptableObject
         World.Instance.BiomeCallEdit(orders);
     }
 
-    //public void CreateMineral(Chunk chunk, ref int[,,] map)
+    //public void CreateMineral(Chunk chunk, ref int[,,] map, Worm worm)
     //{
     //    //만들어진 동굴에 광물 넣기
     //}
@@ -412,7 +426,7 @@ public class TreePlacement
     [Header("무슨 확률로 존재할지")]
     [Range(0.1f, 0.9f)]
     public float probability;
-    [Header("Tree Noise")]
+    [Header("Tree Noise (scale은 0이면 안됨)")]
     //최소 8이상이여야 함 아니면 겹침 (treeZone을 쓰지 않는다면)
     public float scaleTree = 8;
     public float offsetTree;
@@ -515,8 +529,8 @@ public class Underground
     [Header("어느 깊이에 있을지")]
     public int minHeight;   //가장 아래에 나올 수 있는 좌표
     public int maxHeight;   //가장 위에 나올 수 있는 좌표
-    public int depth;
-    [Header("Noise")]
+    public int depth;       //최소한의 깊이
+    [Header("Noise (scale은 0이면 안됨)")]
     public float offset;
     public float scale;
 
@@ -535,6 +549,37 @@ public class Underground
 
         return false;
     }
+}
+
+//땅속 광물들 생성에 관한 클래스
+[System.Serializable]
+public class CavePlacement
+{
+    [Header("무슨 확률로 존재할지")]
+    [Range(0f, 0.01f)]
+    public float probability;
+    [Header("동굴의 크기")]
+    public Vector3Int size;
+    [Header("동굴의 길이")]
+    public int lenght;
+    [Header("동굴의 모양의 확률")]
+    public List<CaveDir> dir;
+    public List<(Vector3Int, int)> Dir()
+    {
+        List<(Vector3Int, int)> values = new();
+        for(int i = 0; i < dir.Count; i++)
+        {
+            values.Add((dir[i].dir, dir[i].probability));
+        }
+        return values;
+    }
+}
+
+[System.Serializable]   
+public class CaveDir
+{
+    public Vector3Int dir;
+    public int probability;
 }
 
 public class BlockOrder

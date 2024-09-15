@@ -215,7 +215,7 @@ public class World : MonoBehaviour
         }
 
         //청크 바깥 없는 존재 불투명 (그리지 않음)
-        return false;
+        return true;
     }
 
     public bool WorldBlockPositionSolid(Vector3 position)

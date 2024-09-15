@@ -25,7 +25,6 @@ MonoBehaviour:
   surfaceHeight: 5
   offsetHeight: 0
   scaleHeight: 0.5
-  cave: 0
   treePlacements:
   - probability: 0.1
     scaleTree: 8
@@ -39,10 +38,22 @@ MonoBehaviour:
     minHeight: 5
     maxHeight: 8
   undergrounds:
-  - type: 2
-    probability: 0.4
+  - type: 10
+    probability: 0.3
     minHeight: 2
     maxHeight: 30
     depth: 5
     offset: 0
     scale: 8
+  - type: 2
+    probability: 0.3
+    minHeight: 2
+    maxHeight: 30
+    depth: 5
+    offset: 0
+    scale: 0.1
+  cavePlacement:
+    probability: 0.001
+    size: {x: 2, y: 2, z: 2}
+    lenght: 100
+    dir: []
