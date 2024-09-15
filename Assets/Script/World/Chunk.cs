@@ -77,11 +77,11 @@ public class Chunk : MonoBehaviour
         if(map == null)
         {
             map = new int[BlockInfo.ChunkWidth, BlockInfo.ChunkHeight, BlockInfo.ChunkWidth];
-            biome.CreateBaseMap(this, ref map);
             biome.CreateWait(this, ref map);
-            biome.CreateUnderground(this, ref map);
-            biome.CreateTreeMap(this, ref map);
-            biome.CreateCave(this, ref map);
+            biome.CreateBaseMap(this, ref map);
+            //biome.CreateUnderground(this, ref map);
+            //biome.CreateTreeMap(this, ref map);
+            //biome.CreateCave(this, ref map);
         }
         gameObject.SetActive(true);
     }

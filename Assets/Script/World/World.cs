@@ -74,7 +74,7 @@ public class World : MonoBehaviour
         for (int i = 0; i < list.Count; i++)
         {
             list[i].Draw();
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
         activeChunks.AddRange(list);
         GameManager.Instance.Players.ToList().ForEach(x => x.transform.position = new Vector3(transform.position.x, Height((int)transform.position.x, (int)transform.position.z) + 3, transform.position.z));
@@ -410,7 +410,9 @@ public class World : MonoBehaviour
 
                 if(chunk.Create)
                 {
-                    chunk.EditBlock(Chunkposition, orders[i].type, false);
+                    //배드락은 수정되지 않도록
+                    if(chunk.IndexToBlockID(Chunkposition) != (int)GameManager.BLCOK_ENUM.Bedrock)
+                        chunk.EditBlock(Chunkposition, orders[i].type, false);
                 }
                 else
                 {
