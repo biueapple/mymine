@@ -17,7 +17,7 @@ public static class BlockInfo
     //가로와 세로의 크기
     public static readonly int ChunkWidth = 16;
     //높이
-    public static readonly int ChunkHeight = 30;
+    public static readonly int ChunkHeight = 64;
 
     //월드에 청크가 몇개 있는가
     public static readonly int WorldSizeInChunks = 10;
@@ -131,4 +131,58 @@ public static class BlockInfo
         new Vector2 (1.0f, 0.0f),
         new Vector2 (1.0f, 1.0f)
     };
+
+
+
+    public static readonly Vector3Int[] plus = new Vector3Int[7]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(-1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(0,-1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(0,0,-1)
+    };
+
+    public static readonly Vector3Int[] chair = new Vector3Int[6]
+    {
+        new Vector3Int(0,0,0),
+        new Vector3Int(1,0,0),
+        new Vector3Int(0,1,0),
+        new Vector3Int(1,1,0),
+        new Vector3Int(0,0,1),
+        new Vector3Int(1,0,1)
+    };
+    public static Vector3Int[] Chair(Vector3Int dir)
+    {
+        if (dir == Vector3Int.back)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(0, 0, -1) + chair[i];
+            }
+            return c;
+        }
+        else if (dir == Vector3Int.down)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(0, -1, 0) + chair[i];
+            }
+            return c;
+        }
+        else if (dir == Vector3Int.left)
+        {
+            Vector3Int[] c = new Vector3Int[6];
+            for (int i = 0; i < chair.Length; i++)
+            {
+                c[i] = new Vector3Int(-1, 0, 0) + chair[i];
+            }
+            return c;
+        }
+        return chair;
+    }
 }

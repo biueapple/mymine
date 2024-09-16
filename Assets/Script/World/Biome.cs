@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR;
 
 [CreateAssetMenu(fileName = "BiomeAttributes", menuName = "Minecraft/Biome Attribute")]
 public class Biome : ScriptableObject
@@ -53,62 +52,10 @@ public class Biome : ScriptableObject
     [SerializeField]
     private CavePlacement cavePlacement;
 
-    private readonly Vector3Int[] plus = new Vector3Int[7]
-    {
-        new Vector3Int(0,0,0),
-        new Vector3Int(1,0,0),
-        new Vector3Int(-1,0,0),
-        new Vector3Int(0,1,0),
-        new Vector3Int(0,-1,0),
-        new Vector3Int(0,0,1),
-        new Vector3Int(0,0,-1)
-    };
-
-    private readonly Vector3Int[] chair = new Vector3Int[6]
-    {
-        new Vector3Int(0,0,0),
-        new Vector3Int(1,0,0),
-        new Vector3Int(0,1,0),
-        new Vector3Int(1,1,0),
-        new Vector3Int(0,0,1),
-        new Vector3Int(1,0,1)
-    };
-    public Vector3Int[] Chair(Vector3Int dir)
-    {
-        if(dir == Vector3Int.back)
-        {
-            Vector3Int[] c = new Vector3Int[6];
-            for (int i = 0; i < chair.Length; i++)
-            {
-                c[i] = new Vector3Int(0, 0, -1) + chair[i];
-            }
-            return c;
-        }
-        else if(dir == Vector3Int.down)
-        {
-            Vector3Int[] c = new Vector3Int[6];
-            for (int i = 0; i < chair.Length; i++)
-            {
-                c[i] = new Vector3Int(0, -1, 0) + chair[i];
-            }
-            return c;
-        }
-        else if(dir == Vector3Int.left)
-        {
-            Vector3Int[] c = new Vector3Int[6];
-            for (int i = 0; i < chair.Length; i++)
-            {
-                c[i] = new Vector3Int(-1, 0, 0) + chair[i];
-            }
-            return c;
-        }
-        return chair;
-    }
-
     public int Height(int x, int z)
     {
         //return (int)(Noise.Get2DPerlin(new Vector2Int(x, z), offsetHeight, scaleHeight) * nomalHeight + surfaceHeight);
-        return (int)GetNoiseValue(x, z) ;
+        return (int)GetNoiseValue(x, z)/* * nomalHeight + surfaceHeight*/;
     }
 
     float GetNoiseValue(int x, int z)
@@ -125,7 +72,7 @@ public class Biome : ScriptableObject
             amplitude *= persistence;
             frequency *= lacunarity;
         }
-        return (total / maxValue) * BlockInfo.ChunkHeight;
+        return (total / maxValue) * nomalHeight + surfaceHeight;
     }
 
     //이 모든 과정을 하나의 함수로 만들어서 불필요한 반복 줄이기
@@ -143,55 +90,53 @@ public class Biome : ScriptableObject
                     //air 의 경우 넣어주지 않더라도 0으로 들어가있어서 괜찮음
                     if (y <= yHeight)
                     {
-                        //가장 아래에는 배드락
-                        if (y < 1)
-                            map[x, y, z] = 3;
 
-                        //가장 윗면
-                        else if (y >= yHeight)
-                            map[x, y, z] = surfaceType;
+                        ////가장 아래에는 배드락
+                        //if (y < 1)
+                        //    map[x, y, z] = 3;
 
-                        //윗면
-                        else if (y >= yHeight - surfaceDepth)
-                            map[x, y, z] = depthBlock;
+                        ////가장 윗면
+                        //else if (y >= yHeight)
+                        //    map[x, y, z] = surfaceType;
 
-                        //그 이외
-                        else
-                            map[x, y, z] = nomalType;
+                        ////윗면
+                        //else if (y >= yHeight - surfaceDepth)
+                        //    map[x, y, z] = depthBlock;
+
+                        ////그 이외
+                        //else
+                        //    map[x, y, z] = nomalType;
 
 
-                        //지하 만들기
-                        for (int i = undergrounds.Length - 1; i >= 0; i--)
-                        {
-                            if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-                            {
-                                map[x, y, z] = undergrounds[i].type;
-                            }
-                        }
+                        ////지하 만들기
+                        //for (int i = undergrounds.Length - 1; i >= 0; i--)
+                        //{
+                        //    if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+                        //    {
+                        //        map[x, y, z] = undergrounds[i].type;
+                        //    }
+                        //}
+                        CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight));
                     }
                 }
 
-                //나무 만들기
-                for (int i = treePlacements.Length - 1; i >= 0; i--)
-                {
-                    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
-                    {
-                        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
-                    }
-                }
+                ////나무 만들기
+                //for (int i = treePlacements.Length - 1; i >= 0; i--)
+                //{
+                //    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
+                //    {
+                //        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
+                //    }
+                //}
 
-                //동굴 만들기
-                if(cavePlacement != null)
-                {
-                    if(Random.Range(0f, 1f) <= cavePlacement.probability)
-                    {
-                        CreateCave(x, yHeight, z, chunk, ref map);
-                    }
-                    //if (Random.Range(0, 1f) > 0.999f)
-                    //{
-                    //    CreateCave(x, yHeight, z, chunk, ref map);
-                    //}
-                }
+                ////동굴 만들기
+                //if(cavePlacement != null)
+                //{
+                //    if(Random.Range(0f, 1f) <= cavePlacement.probability)
+                //    {
+                //        CreateCave(x, yHeight, z, chunk, ref map);
+                //    }
+                //}
                 
             }
         }
@@ -383,7 +328,7 @@ public class Biome : ScriptableObject
                 //광물이 설치될 모양을 선택
                 //일단은 chair로 고정
 
-                Vector3Int[] c = Chair(worm.pathWall[i].dir);
+                Vector3Int[] c = BlockInfo.Chair(worm.pathWall[i].dir);
                 for (int index = 0; index < c.Length; index++)
                 {
                     //자신의 청크 범위 안
@@ -413,10 +358,35 @@ public class Biome : ScriptableObject
         World.Instance.BiomeCallEdit(orders);
     }
 
-    //public void CreateMineral(Chunk chunk, ref int[,,] map, Worm worm)
-    //{
-    //    //만들어진 동굴에 광물 넣기
-    //}
+    //광물 생성기
+    public void CreateMineral(int x, int y, int z, Chunk chunk, ref int[,,] map, (Vector3Int[] vectors, int id) shape)
+    {
+        Vector3Int worldPosition;
+        List<BlockOrder> orders = new();
+
+        if (shape.vectors != null)
+        {
+            for (int i = 0; i < shape.vectors.Length; i++)
+            {
+                //범위를 벗어남
+                if(x + shape.vectors[i].x < 0 || x + shape.vectors[i].x >= BlockInfo.ChunkWidth ||
+                   y + shape.vectors[i].y < 0 || y + shape.vectors[i].y >= BlockInfo.ChunkHeight ||
+                   z + shape.vectors[i].z < 0 || z + shape.vectors[i].z >= BlockInfo.ChunkWidth)
+                {
+                    //자신의 청크 범위 밖
+                    worldPosition = new Vector3Int(chunk.Position.x + x, y, chunk.Position.z + z);
+                    orders.Add(new BlockOrder(worldPosition + shape.vectors[i], shape.id));
+                }
+                else
+                {
+                    map[x + shape.vectors[i].x, y + shape.vectors[i].y, z + shape.vectors[i].z] = shape.id;
+                }
+            }
+        }
+        
+        if(orders.Count > 0)
+            World.Instance.BiomeCallEdit(orders);
+    }
 }
 
 
@@ -517,7 +487,7 @@ public class TreePlacement
 }
 
 
-//땅속 지형 
+//땅속 지형 (광물을 생성하는것도 이 클래스가 하려 했지만 안하는걸로 변경)
 [System.Serializable]
 public class Underground
 {
@@ -587,13 +557,13 @@ public class BlockOrder
     //이름이 world인 이유는 월드포지션을 줘야한다고 기억할려고
     public Vector3Int local;
     //무슨 블록인지 
-    public byte type;
-    public BlockOrder(int x, int y, int z, byte type)
+    public int type;
+    public BlockOrder(int x, int y, int z, int type)
     {
         local = new Vector3Int(x, y, z);
         this.type = type;
     }
-    public BlockOrder(Vector3Int pos, byte type)
+    public BlockOrder(Vector3Int pos, int type)
     {
         local = pos;
         this.type = type;

@@ -115,6 +115,12 @@ public class GameManager : MonoBehaviour
     }
 
     private readonly Dictionary<int, Block> allBlock = new ();
+    public IMineral[] Minerals { 
+        get 
+        {
+            return allBlock.Values.OfType<IMineral>().ToArray();
+        } 
+    }
     public Block GetBlock(int id)
     {
         allBlock.TryGetValue(id, out Block block);
@@ -123,6 +129,25 @@ public class GameManager : MonoBehaviour
     private void AddBlock(Block block)
     {
         allBlock.Add(block.ID, block);
+    }
+
+    public (Vector3Int[], int) Mineral(int y, int yHeight)
+    {
+        IMineral[] minerals = Minerals.Where(s => s.Possibility(y, yHeight)).ToArray();
+        float pro = Random.Range(0f, 1f);
+        for(int i = 0; i < minerals.Length; i++)
+        {
+            if (minerals[i].Probability >= pro)
+            {
+                Vector3Int[] vectors = minerals[i].ShapeDir(new Vector3Int());
+                if (minerals[i] is Block b)
+                {
+                    return (vectors, b.ID);
+                }
+            }
+            pro -= minerals[i].Probability;
+        }
+        return (null, 0);
     }
 
     //
