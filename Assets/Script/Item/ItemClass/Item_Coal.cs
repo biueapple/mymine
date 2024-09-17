@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_Coal : Item
+public class Item_Coal : Item , IFlammable
 {
-    public Item_Coal(int itemID) : base(itemID, "¼®Åº", "¼®Åº", Item_Rating.COMMON, true, Resources.Load<Sprite>("Item/Sword"))
+    public Item_Coal(int itemID) : base(itemID, "¼®Åº", "¼®Åº", Item_Rating.COMMON, true, Resources.Load<Sprite>("Item/269"))
     {
 
     }
+
+    public float Flammable => 8;
 }

@@ -52,7 +52,37 @@ public class InventorySystem : MonoBehaviour
             Debug.Log(amount + "만큼 아이템 생성 실패");
         }
 
+        amount = inventoryStorage.Acquire(GameManager.Instance.GetItem(2), 10);
+        if (amount == 0)
+        {
+            Debug.Log("아이템 생성");
+        }
+        else
+        {
+            Debug.Log(amount + "만큼 아이템 생성 실패");
+        }
+
         amount = inventoryStorage.Acquire(GameManager.Instance.GetItem(7), 1);
+        if (amount == 0)
+        {
+            Debug.Log("아이템 생성");
+        }
+        else
+        {
+            Debug.Log(amount + "만큼 아이템 생성 실패");
+        }
+
+        amount = inventoryStorage.Acquire(GameManager.Instance.GetItem(11), 10);
+        if (amount == 0)
+        {
+            Debug.Log("아이템 생성");
+        }
+        else
+        {
+            Debug.Log(amount + "만큼 아이템 생성 실패");
+        }
+
+        amount = inventoryStorage.Acquire(GameManager.Instance.GetItem(12), 1);
         if (amount == 0)
         {
             Debug.Log("아이템 생성");

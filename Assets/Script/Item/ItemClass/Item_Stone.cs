@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item_Stone : Item, IInstall
 {
-    public Item_Stone(int itemID) : base (itemID, "돌", "설치가 가능한 돌", Item_Rating.COMMON, true, Resources.Load<Sprite>("Icon/Sword"))
+    public Item_Stone(int itemID) : base (itemID, "돌", "설치가 가능한 돌", Item_Rating.COMMON, true, Resources.Load<Sprite>("Icon/1"))
     {
         blockID = 1;
     }

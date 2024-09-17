@@ -47,6 +47,7 @@ public class ItemCatchState : IMouseState
         if (corsor.ItemSlot.Item != null && coroutine == null)
         {
             corsor.gameObject.SetActive(true);
+            corsor.transform.SetAsLastSibling();
             coroutine = UIManager.Instance.MouseFallow(corsor.gameObject);
         }
         else if (corsor.ItemSlot.Item == null && coroutine != null)

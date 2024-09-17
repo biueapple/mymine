@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,6 +56,7 @@ public class Chunk : MonoBehaviour
             return 0;
         if (index.z < 0 || index.z >= map.GetLength(2))
             return 0;
+
         int ex = map[index.x, index.y, index.z];
         map[index.x, index.y, index.z] = id;
         

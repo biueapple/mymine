@@ -91,21 +91,21 @@ public class Biome : ScriptableObject
                     if (y <= yHeight)
                     {
 
-                        ////가장 아래에는 배드락
-                        //if (y < 1)
-                        //    map[x, y, z] = 3;
+                        //가장 아래에는 배드락
+                        if (y < 1)
+                            map[x, y, z] = 3;
 
-                        ////가장 윗면
-                        //else if (y >= yHeight)
-                        //    map[x, y, z] = surfaceType;
+                        //가장 윗면
+                        else if (y >= yHeight)
+                            map[x, y, z] = surfaceType;
 
-                        ////윗면
-                        //else if (y >= yHeight - surfaceDepth)
-                        //    map[x, y, z] = depthBlock;
+                        //윗면
+                        else if (y >= yHeight - surfaceDepth)
+                            map[x, y, z] = depthBlock;
 
-                        ////그 이외
-                        //else
-                        //    map[x, y, z] = nomalType;
+                        //그 이외
+                        else
+                            map[x, y, z] = nomalType;
 
 
                         ////지하 만들기
@@ -116,7 +116,7 @@ public class Biome : ScriptableObject
                         //        map[x, y, z] = undergrounds[i].type;
                         //    }
                         //}
-                        CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight));
+                        //CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight));
                     }
                 }
 

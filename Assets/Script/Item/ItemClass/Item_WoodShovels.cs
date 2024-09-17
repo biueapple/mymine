@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item_WoodShovels : Item, Strength_Shovels , IConsume
+public class Item_WoodShovels : Item, Strength_Shovels , IConsume , IFlammable
 {
-    public Item_WoodShovels(int itemID) : base(itemID, "나무 삽", "우클릭으로 흙을 경작지로 바꿀 수 있다.", Item_Rating.COMMON, false, Resources.Load<Sprite>("Item/Sword"))
+    public Item_WoodShovels(int itemID) : base(itemID, "나무 삽", "우클릭으로 흙을 경작지로 바꿀 수 있다.", Item_Rating.COMMON, false, Resources.Load<Sprite>("Item/369"))
     {
         strength = 2;
         maxDurability = 100;
@@ -19,6 +19,8 @@ public class Item_WoodShovels : Item, Strength_Shovels , IConsume
 
     protected int durability;
     public int Durability => durability;
+
+    public float Flammable => 3;
 
     public void Consume()
     {

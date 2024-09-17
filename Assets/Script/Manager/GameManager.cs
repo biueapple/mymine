@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
         AddItem(new Item_Plank(9));
         AddItem(new Item_WoodenStick(10));
         AddItem(new Item_Coal(11));
+        AddItem(new Item_Furnace(12));
 
         AddBlock(new Stone(1));
         AddBlock(new Dirt(2));
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour
         AddBlock(new leaf(8));
         AddBlock(new Plank(9));
         AddBlock(new CoalOre(10));
+        AddBlock(new Furnace(11));
 
         DontDestroyOnLoad(instance);
     }

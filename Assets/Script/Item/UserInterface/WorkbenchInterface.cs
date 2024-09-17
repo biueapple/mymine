@@ -12,5 +12,4 @@ public class WorkbenchInterface : MonoBehaviour
     {
         staticInterface.Interlock(storage);
     }
-
 }

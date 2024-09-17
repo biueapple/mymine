@@ -327,7 +327,7 @@ public class World : MonoBehaviour
                 int index = chunk.IndexToBlockID(Chunkposition);
                 if (index == 0)
                 {
-                    chunk.EditBlock(chunkIndex, id, true);
+                    chunk.EditBlock(Chunkposition, id, true);
                 }
 
                 //바뀐 블록의 모든면이 다른 청크의 위치와 붙어있는지 체크

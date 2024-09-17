@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item_Dirt : Item, IInstall
 {
-    public Item_Dirt(int itemID) : base(itemID, "入", "弊成 入", Item_Rating.COMMON, true, Resources.Load<Sprite>("Item/Sword"))
+    public Item_Dirt(int itemID) : base(itemID, "入", "弊成 入", Item_Rating.COMMON, true, Resources.Load<Sprite>("Item/3"))
     {
         blockID = 2;
     }
