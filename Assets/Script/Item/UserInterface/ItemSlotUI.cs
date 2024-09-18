@@ -61,8 +61,11 @@ public class ItemSlotUI : MonoBehaviour , IPointerDownHandler, IPointerUpHandler
             amount.text = _itemSlot.Amount > 1 ? _itemSlot.Amount.ToString() : "";
             if(_itemSlot.Item is IConsume consume)
             {
-                consumeFill.gameObject.SetActive(true);
-                consumeFill.fillAmount = (float)consume.Durability / consume.MaxDurability;
+                if(consume.MaxDurability > 1)
+                {
+                    consumeFill.gameObject.SetActive(true);
+                    consumeFill.fillAmount = (float)consume.Durability / consume.MaxDurability;
+                }
             }
         }
     }

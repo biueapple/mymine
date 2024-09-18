@@ -21,6 +21,9 @@ public class Furnace : Block, IBlockOpenUI
     private readonly Storage storage;
     private Coroutine baking;
 
+    private float fuelTime = 0;   // Fire에 대한 타이머
+    private float foodTime = 0;   // Completion에 대한 타이머
+
     //0번 슬롯이 연료 1번슬롯이 태워질 물체 2번 슬롯이 결과물
     public Furnace(int id) : base(id, "화로", HardnessType.PICKAX, 3, false, true, 12, new int[6] { 261, 259, 262, 262, 261, 261 })
     {
@@ -50,6 +53,7 @@ public class Furnace : Block, IBlockOpenUI
         if(storage.Slots[0].Item is IFlammable flammable && storage.Slots[1].Item is IThermal && baking == null)
         {
             //타기 시작
+            fuelTime = flammable.Flammable;
             baking = GameManager.Instance.StartCoroutine(Baking(flammable.Flammable));
             //연료 소모
             storage.Slots[0].Update(storage.Slots[0].Item, storage.Slots[0].Amount - 1);
@@ -58,36 +62,39 @@ public class Furnace : Block, IBlockOpenUI
 
     private IEnumerator Baking(float burnTime)
     {
-        float fuelStartTime = Time.time;   // Fire에 대한 타이머
-        float foodStartTime = Time.time;   // Completion에 대한 타이머
-
         // 연료가 태워지고, 구워지는 동안 기다림
-        while (Time.time < fuelStartTime + burnTime)
+        while (fuelTime > 0)
         {
             if (storage.Slots[1].Item is IThermal thermal)
             {
                 // 연료 진행 상태 (0에서 1 사이)
-                furnaceInterface.Fire = 1 - ((Time.time - fuelStartTime) / burnTime);
+                furnaceInterface.Fire = fuelTime / burnTime;
 
                 // 음식 구워지는 진행 상태 계산 (0에서 1 사이)
-                furnaceInterface.Completion = (Time.time - foodStartTime) / thermal.Thermal;
+                furnaceInterface.Completion = foodTime / thermal.Thermal;
 
-                if (Time.time >= foodStartTime + thermal.Thermal)
+                if (foodTime >= thermal.Thermal)
                 {
                     Result(thermal);
-                    foodStartTime = Time.time;  // 음식이 구워지면 음식 타이머만 초기화
+                    foodTime = 0;  // 음식이 구워지면 음식 타이머만 초기화
                 }
+
+                //음식의 완성도는 음식이 있어야만 진행
+                foodTime += Time.deltaTime;
             }
             else
             {
-                // 음식이 없을 때는 구워지는 진행 상태를 초기화하지 않음
-                foodStartTime = Time.time;
+                // 음식이 없을 때는 구워지는 진행 상태를 초기화
+                foodTime = 0;
             }
 
             yield return null;
+            //연료의 소모는 무조건적으로 이뤄짐
+            fuelTime -= Time.deltaTime;
         }
 
         baking = null;  // 연료가 모두 타면 baking 상태를 종료
+        Check(null);
     }
 
     //이 함수는 콜백으로 들어가는 함수가 아님

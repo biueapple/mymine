@@ -9,5 +9,5 @@ public class Item_Coal : Item , IFlammable
 
     }
 
-    public float Flammable => 8;
+    public float Flammable => 18;
 }
