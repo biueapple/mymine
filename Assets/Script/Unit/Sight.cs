@@ -6,11 +6,11 @@ using UnityEngine;
 //시야내에 얼마나 있는지 찾는 클래스
 public class Sight
 {
-    private List<(Substance enemy, float distance)> preliminary = new();
+    private readonly List<(Substance enemy, float distance)> preliminary = new();
     public List<(Substance enemy, float distance)> Values { get {  return preliminary; } }
 
-    private Camera camera;
-    private Rect rect;
+    private readonly Camera camera;
+    private readonly Rect rect;
 
     public Sight(Camera camera, Rect rect) 
     {

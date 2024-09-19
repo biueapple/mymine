@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoalOre : Block , IMineral
+public class IronOre : Block, IMineral
 {
-    public CoalOre(int id) : base(id, "¼®Åº±¤¼®", HardnessType.PICKAX, 3, false, true, 11, new int[6] { 161, 161, 161, 161, 161, 161 })
+    public IronOre(int id) : base(id, "Ã¶ ±¤¹°", HardnessType.PICKAX, 4, false, true, 14, new int[6] {395, 395, 395, 395, 395, 395 })
     {
         shape = new Vector3Int[2][]
         {
@@ -17,9 +17,9 @@ public class CoalOre : Block , IMineral
 
     public int MinHeight => 5;
 
-    public int MaxHeight => 30;
+    public int MaxHeight => 25;
 
-    public int Depth => 5;
+    public int Depth => 10;
 
     protected Vector3Int[][] shape;
     public Vector3Int[][] Shape => shape;

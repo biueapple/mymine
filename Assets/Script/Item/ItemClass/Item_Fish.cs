@@ -6,16 +6,12 @@ public class Item_Fish : Item, IFood , IThermal
 {
     public Item_Fish(int itemID) : base(itemID, "물고기", "신선한 물고기 \n허기를 2 채워준다.", Item_Rating.COMMON, true, Resources.Load<Sprite>("Item/303"))
     {
-        fullness = 2;
-        maxDurability = 1;
         durability = 1;
     }
 
-    protected int fullness;
-    public int Fullness => fullness;
+    public int Fullness => 2;
 
-    protected int maxDurability;
-    public int MaxDurability => maxDurability;
+    public int MaxDurability => 1;
 
     protected int durability;
     public int Durability => durability;
@@ -34,6 +30,6 @@ public class Item_Fish : Item, IFood , IThermal
     public Item Done()
     {
         //자신을 구운 물고기로 바꿔야 하는데
-        return this;
+        return GameManager.Instance.GetItem(13);
     }
 }

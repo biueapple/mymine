@@ -2,15 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scarecrow : Unit
+public class Scarecrow : Enemy
 {
     [Header("공격받았을때 밀려나지 않을 것인가")]
     [SerializeField]
     private bool fixation;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
+        //base.Start();
         moveSystem.AddMoveMode(new GravityForce(moveSystem.Machine));
 
         moveSystem.AddMoveMode(new WorldMovePhysicsShift(moveSystem.Machine, GetComponent<Unit>()));
@@ -19,7 +20,10 @@ public class Scarecrow : Unit
 
     }
 
-    Color original;
+    public override Transform Head => null;
+
+    public override Transform Body => null;
+
     // Update is called once per frame
     void Update()
     {
@@ -30,5 +34,10 @@ public class Scarecrow : Unit
     {
         if(!fixation)
             base.Pushed(dir, power);
+    }
+
+    protected override void Dead()
+    {
+        
     }
 }

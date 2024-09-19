@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,8 +11,7 @@ public class MonsterInformation
     {
         get
         {
-            if(instance == null)
-                instance = new MonsterInformation();
+            instance ??= new MonsterInformation();
             return instance;
         }
     }
@@ -21,8 +21,8 @@ public class MonsterInformation
         infomation = Resources.Load<RectTransform>("UI/Unit/MonsterInfo");
     }
 
-    private RectTransform infomation;
-    private List<(Enemy enemy, RectTransform rect)> list = new ();  
+    private readonly RectTransform infomation;
+    private readonly List<(Enemy enemy, RectTransform rect)> list = new ();  
     public List<(Enemy enemy, RectTransform rect)> List { get { return list; } }
 
     //적을 넘기면 그 정보를 ui에 띄워줌
@@ -37,11 +37,19 @@ public class MonsterInformation
 
     public void CloseMonsterInfo(Enemy enemy)
     {
-        (Enemy, RectTransform) index = list.Find(x => x.Item1 == enemy);
-        if(index.Item2 != null)
+        (Enemy e, RectTransform r) index = list.Find(x => x.enemy == enemy);
+        if(index.r != null)
         {
-            ObjectPooling.Instance.DestroyObject(index.Item2.gameObject);
+            ObjectPooling.Instance.DestroyObject(index.r.gameObject);
             list.Remove(index);
         }    
+    }
+    public void CloseMonsterInfo()
+    {
+        for(int i = 0; i < list.Count; i++)
+        {
+            ObjectPooling.Instance.DestroyObject(list[i].rect.gameObject);
+        }
+        list.Clear  ();
     }
 }

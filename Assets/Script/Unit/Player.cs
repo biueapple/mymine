@@ -5,7 +5,15 @@ using UnityEngine;
 public class Player : Unit
 {
     private IPlayerInputSystem playerInput;
-    public IPlayerInputSystem PlayerInput { get { return playerInput; } set { playerInput = value; } }
+    public IPlayerInputSystem PlayerInput 
+    { get { return playerInput; } 
+        set 
+        {
+            playerInput?.Exit();
+            playerInput = value;
+            playerInput?.Enter();
+        } 
+    }
 
     [SerializeField]
     private Transform hand;
@@ -110,7 +118,7 @@ public class Player : Unit
         {
             ModeChange();
         }
-        else if(Input.GetKeyDown(KeyCode.Q))
+        else if (Input.GetKeyDown(KeyCode.Q))
         {
             Aiming();
         }
@@ -146,15 +154,15 @@ public class Player : Unit
 
     private void ModeChange()
     {
-        if (playerInput.Mode == stateNomal)
+        if (PlayerInput.Mode == stateNomal)
         {
-            playerInput.Mode = stateBattle;
+            PlayerInput = stateBattle;
             inventory.HotkeyInterface.gameObject.SetActive(false);
             skillSystem.SkillInterface.gameObject.SetActive(true);
         }
         else
         {
-            playerInput.Mode = stateNomal;
+            PlayerInput = stateNomal;
             inventory.HotkeyInterface.gameObject.SetActive(true);
             skillSystem.SkillInterface.gameObject.SetActive(false);
         }
@@ -164,7 +172,7 @@ public class Player : Unit
     {
         if (playerInput.Mode == stateBattle)
         {
-            playerInput = playerInputStateAming;
+            PlayerInput = playerInputStateAming;
         }
     }
 
@@ -197,7 +205,7 @@ public class Player : Unit
                 projectileObject.gameObject.SetActive(false);
                 projectileObjects[i] = projectileObject;
             }
-            playerInput = new PlayerInputStateAming(cam, this, UIManager.Instance.Canvas, projectileObjects, 3);
+            PlayerInput = new PlayerInputStateAming(cam, this, UIManager.Instance.Canvas, projectileObjects, 3);
         }
     }
 

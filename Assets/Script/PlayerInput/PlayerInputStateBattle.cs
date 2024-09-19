@@ -5,19 +5,21 @@ using UnityEngine;
 
 public class PlayerInputStateBattle : IPlayerInputSystem
 {
-    public IPlayerInputSystem Mode { get => this; set { player.PlayerInput = value; } }
+    public IPlayerInputSystem Mode { get => this; 
+        //set { player.PlayerInput = value; }
+    }
     private readonly Player player;
     private readonly EquipmentSystem equipmentSystem;
     private AttackModule attackModule;
     public AttackModule AttackModule { get => attackModule; }
 
-    private AttackMotionTree attackMotionTree;
+    private readonly AttackMotionTree attackMotionTree;
     public AttackMotionTree AttackMotionTree { get  => attackMotionTree; }
 
-    private AttackMotionInterface attackmotionInterface;
+    private readonly AttackMotionInterface attackmotionInterface;
     public AttackMotionInterface AttackMotionInterace { get { return attackmotionInterface; } }
 
-    private Rect rect;
+    private readonly Rect rect;
 
     public PlayerInputStateBattle(Player player, EquipmentSystem equipmentSystem, AttackMotionInterface attackMotionInterface)
     {
@@ -74,7 +76,7 @@ public class PlayerInputStateBattle : IPlayerInputSystem
 
     }
 
-    Sight sight;
+    readonly Sight sight;
     public void Update()
     {
         if(Input.GetKeyDown(KeyCode.L))
@@ -93,7 +95,7 @@ public class PlayerInputStateBattle : IPlayerInputSystem
         //적을 찾아서 화면에 표시해주기
         sight.SightOn();
         //현재 보이는 것들중에서 적만 가지고
-        List<Enemy> enemyList = new List<Enemy>();
+        List<Enemy> enemyList = new ();
         for(int i = 0; i < sight.Values.Count; i++)
         {
             if (sight.Values[i].enemy.Unit is Enemy enemy)
@@ -150,5 +152,16 @@ public class PlayerInputStateBattle : IPlayerInputSystem
             equipmentSystem.AttackMotionSlots[i].gameObject.SetActive(false);
         }
         attackModule = null;
+    }
+
+    public void Enter()
+    {
+
+    }
+
+    public void Exit()
+    {
+        //만들어진 ui들 삭제
+        MonsterInformation.Instance.CloseMonsterInfo();
     }
 }

@@ -5,12 +5,12 @@ using UnityEngine;
 public class PlayerInputStateNomal : IPlayerInputSystem
 {
     public IPlayerInputSystem Mode { get => this; 
-        set
-        {
-            broken = 1;
-            brokenPre.SetActive(false);
-            player.PlayerInput = value;
-        } 
+        //set
+        //{
+        //    broken = 1;
+        //    brokenPre.SetActive(false);
+        //    player.PlayerInput = value;
+        //} 
     }
     private readonly Player player;
     private World.BlockLaycast blockLaycast;
@@ -94,5 +94,16 @@ public class PlayerInputStateNomal : IPlayerInputSystem
     public void Update()
     {
         
+    }
+
+    public void Enter()
+    {
+        
+    }
+
+    public void Exit()
+    {
+        broken = 1;
+        brokenPre.SetActive(false);
     }
 }

@@ -1,41 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerInputStateAming : IPlayerInputSystem
 {
-    public IPlayerInputSystem Mode { get => playerInput; set
-        {
-            Extinction();
-            player.PlayerInput = value;
-        }
-    }
-    private Player player;
-    private IPlayerInputSystem playerInput;
+    public IPlayerInputSystem Mode { get => playerInput; }
+
+    private readonly Player player;
+    private readonly IPlayerInputSystem playerInput;
 
     //쏠 투사체의 숫자
     private readonly ProjectileObject[] projectileObjects;
     //조준할 상대의 숫자 (한번의 발사로 모든 투사체를 발사함)
-    private int count;
+    private readonly int count;
 
-    private Rect rect;
+    private readonly Rect rect;
 
-    private Camera mainCamera;
+    private readonly Camera mainCamera;
 
-    private Image aim;
-    private List<Image> aimList = new();
+    private readonly Image aim;
+    private readonly List<Image> aimList = new();
 
     private List<Substance> enemy = new();
     public Substance[] Enemy { get { return enemy.ToArray(); } }
 
+    private Sight sight;
     public PlayerInputStateAming(Camera camera, Player player, Canvas canvas, ProjectileObject[] projectileObjects)
     {
         mainCamera = camera;
 
         this.player = player;
-        playerInput = player.PlayerInput;
+        playerInput = player.PlayerInput.Mode;
 
         rect.width = 1000;
         rect.height = 1000;
@@ -44,6 +42,8 @@ public class PlayerInputStateAming : IPlayerInputSystem
 
         this.projectileObjects = projectileObjects;
         count = 1;
+
+        sight = new Sight(camera, rect);
 
         aim = Resources.Load<Image>("UI/AimStateImage");
         CreateAimImage(canvas.transform);
@@ -54,7 +54,7 @@ public class PlayerInputStateAming : IPlayerInputSystem
         mainCamera = camera;
 
         this.player = player;
-        playerInput = player.PlayerInput;
+        playerInput = player.PlayerInput.Mode;
 
         rect.width = width;
         rect.height = height;
@@ -63,6 +63,8 @@ public class PlayerInputStateAming : IPlayerInputSystem
 
         this.projectileObjects = projectileObjects;
         this.count = count;
+
+        sight = new Sight(camera, rect);
 
         aim = Resources.Load<Image>("UI/AimStateImage");
         CreateAimImage(canvas.transform);
@@ -86,21 +88,11 @@ public class PlayerInputStateAming : IPlayerInputSystem
     //지금은 모든 유닛이 타겟임 (팀이 나눠있지 않기에)
     public virtual void Update()
     {
-        List<(Substance enemy, float distance)> preliminary = new();
-        //모든 유닛중에 팀이 enemy인것만
-        Substance[] substances = GameManager.Instance.Substances.Where(x => x.Unit.STAT.Team == ETeam.Enemy).ToArray();
-        //범위 안에 있는지
-        for (int i = 0; i < substances.Length; i++)
-        {
-            Vector3 screenPosition = WorldToCamera(substances[i].transform.position);
-            if (screenPosition.z > 0 && rect.Contains(screenPosition))
-            {
-                float distance = Vector2.Distance(screenPosition, new Vector2(rect.x, rect.y));
-                preliminary.Add((substances[i], distance));
-            }
-        }
-        //범위에서 중앙에 가장 가까운 순으로 정렬
-        enemy = preliminary.OrderBy(e => e.distance).Take(count).Select(e => e.enemy).ToList();
+        playerInput?.Update();
+
+        sight.SightOn();
+        enemy = sight.Values.Take(count).Select(x => x.enemy).ToList();
+
         Aim();
     }
 
@@ -108,7 +100,12 @@ public class PlayerInputStateAming : IPlayerInputSystem
     private void Extinction()
     {
         for (int i = 0; i < aimList.Count; i++)
+        {
+            Debug.Log("오브젝트 풀링을 사용하지 않는 destroy");
+            Debug.Log(aimList[i].gameObject);
             Object.Destroy(aimList[i].gameObject);
+        }
+        aimList.Clear();
         player.PlayerInput = playerInput;
     }
 
@@ -142,6 +139,7 @@ public class PlayerInputStateAming : IPlayerInputSystem
     {
         for (int i = 0; i < count; i++)
         {
+            Debug.Log("오브젝트 풀링을 사용하지 않는 생성");
             aimList.Add(Object.Instantiate(aim, canvas));
             aimList[^1].gameObject.SetActive(false);
         }
@@ -150,5 +148,22 @@ public class PlayerInputStateAming : IPlayerInputSystem
     private Vector3 WorldToCamera(Vector3 position)
     {
         return mainCamera.WorldToScreenPoint(position);
+    }
+
+    public void Enter()
+    {
+
+    }
+
+    public void Exit()
+    {
+        //캔슬
+        for (int i = 0; i < aimList.Count; i++)
+        {
+            Debug.Log("오브젝트 풀링을 사용하지 않는 destroy");
+            Debug.Log(aimList[i].gameObject);
+            Object.Destroy(aimList[i].gameObject);
+        }
+        aimList.Clear();
     }
 }

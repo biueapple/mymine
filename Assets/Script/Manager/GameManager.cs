@@ -32,6 +32,11 @@ public class GameManager : MonoBehaviour
         Plank,
         WoodenStick,
         Coal,
+        Furnace,
+        CookedFish,
+        IronOre,
+        IronIngot,
+
     }
 
     public enum BLCOK_ENUM
@@ -46,6 +51,8 @@ public class GameManager : MonoBehaviour
         Leaf,
         Plank,
         CoalOre,
+        Furnace,
+        IronOre,
 
     }
 
@@ -65,6 +72,9 @@ public class GameManager : MonoBehaviour
         AddItem(new Item_WoodenStick(10));
         AddItem(new Item_Coal(11));
         AddItem(new Item_Furnace(12));
+        AddItem(new Item_CookedFish(13));
+        AddItem(new Item_IronOre(14));
+        AddItem(new Item_IronIngot(15));
 
         AddBlock(new Stone(1));
         AddBlock(new Dirt(2));
@@ -77,6 +87,7 @@ public class GameManager : MonoBehaviour
         AddBlock(new Plank(9));
         AddBlock(new CoalOre(10));
         AddBlock(new Furnace(11));
+        AddBlock(new IronOre(12));
 
         DontDestroyOnLoad(instance);
     }
@@ -135,21 +146,40 @@ public class GameManager : MonoBehaviour
 
     public (Vector3Int[], int) Mineral(int y, int yHeight)
     {
-        IMineral[] minerals = Minerals.Where(s => s.Possibility(y, yHeight)).ToArray();
-        float pro = Random.Range(0f, 1f);
-        for(int i = 0; i < minerals.Length; i++)
+        // 전체적으로 광물이 나타날 확률 (예를 들어, 0.05는 5%의 확률을 의미)
+        float mineralAppearanceProbability = 0.0005f;
+
+        // 광물이 나타날 확률을 먼저 계산
+        if (Random.Range(0f, 1f) > mineralAppearanceProbability)
         {
-            if (minerals[i].Probability >= pro)
+            // 광물이 나타나지 않으면 아무것도 반환하지 않음
+            return (null, 0);
+        }
+
+        // 광물이 나타날 경우 해당 높이에 존재할 수 있는 광물 필터링
+        IMineral[] minerals = Minerals.Where(s => s.Possibility(y, yHeight)).ToArray();
+
+        // 확률 총합 구하기 (각 광물의 확률을 더함)
+        float totalProbability = minerals.Sum(m => m.Probability);
+
+        // 0과 totalProbability 사이에서 무작위 값 생성
+        float pro = Random.Range(0f, totalProbability);
+
+        // 확률에 따라 광물 선택
+        for (int i = 0; i < minerals.Length; i++)
+        {
+            if (pro <= minerals[i].Probability)
             {
                 Vector3Int[] vectors = minerals[i].ShapeDir(new Vector3Int());
                 if (minerals[i] is Block b)
                 {
-                    return (vectors, b.ID);
+                    return (vectors, b.ID); // 선택된 광물 반환
                 }
             }
             pro -= minerals[i].Probability;
         }
-        return (null, 0);
+
+        return (null, 0); // 만약 광물이 선택되지 않았을 경우
     }
 
     //

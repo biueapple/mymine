@@ -22,7 +22,7 @@ MonoBehaviour:
   surfaceDepth: 3
   nomalType: 1
   nomalHeight: 20
-  surfaceHeight: 5
+  surfaceHeight: 10
   offsetHeight: 0
   scaleHeight: 0.5
   treePlacements:
