@@ -91,53 +91,53 @@ public class Biome : ScriptableObject
                     if (y <= yHeight)
                     {
 
-                        ////가장 아래에는 배드락
-                        //if (y < 1)
-                        //    map[x, y, z] = 3;
+                        //가장 아래에는 배드락
+                        if (y < 1)
+                            map[x, y, z] = 3;
 
-                        ////가장 윗면
-                        //else if (y >= yHeight)
-                        //    map[x, y, z] = surfaceType;
+                        //가장 윗면
+                        else if (y >= yHeight)
+                            map[x, y, z] = surfaceType;
 
-                        ////윗면
-                        //else if (y >= yHeight - surfaceDepth)
-                        //    map[x, y, z] = depthBlock;
+                        //윗면
+                        else if (y >= yHeight - surfaceDepth)
+                            map[x, y, z] = depthBlock;
 
-                        ////그 이외
-                        //else
-                        //    map[x, y, z] = nomalType;
+                        //그 이외
+                        else
+                            map[x, y, z] = nomalType;
 
 
-                        ////지하 만들기
-                        //for (int i = undergrounds.Length - 1; i >= 0; i--)
-                        //{
-                        //    if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-                        //    {
-                        //        map[x, y, z] = undergrounds[i].type;
-                        //    }
-                        //}
-                        CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight));
+                        //지하 만들기
+                        for (int i = undergrounds.Length - 1; i >= 0; i--)
+                        {
+                            if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+                            {
+                                map[x, y, z] = undergrounds[i].type;
+                            }
+                        }
+                        CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight, 0.0005f));
                     }
                 }
 
-                ////나무 만들기
-                //for (int i = treePlacements.Length - 1; i >= 0; i--)
-                //{
-                //    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
-                //    {
-                //        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
-                //    }
-                //}
+                //나무 만들기
+                for (int i = treePlacements.Length - 1; i >= 0; i--)
+                {
+                    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
+                    {
+                        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
+                    }
+                }
 
-                ////동굴 만들기
-                //if(cavePlacement != null)
-                //{
-                //    if(Random.Range(0f, 1f) <= cavePlacement.probability)
-                //    {
-                //        CreateCave(x, yHeight, z, chunk, ref map);
-                //    }
-                //}
-                
+                //동굴 만들기
+                if (cavePlacement != null)
+                {
+                    if (Random.Range(0f, 1f) <= cavePlacement.probability)
+                    {
+                        CreateCave(x, yHeight, z, chunk, ref map);
+                    }
+                }
+
             }
         }
     }
@@ -155,46 +155,6 @@ public class Biome : ScriptableObject
         }
         chunk.wait.Clear();
     }
-
-    //public void CreateUnderground(Chunk chunk, ref int[,,] map)
-    //{
-    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-    //    //{
-    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-    //    //    {
-    //    //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-    //    //        for (int y = 0; y < BlockInfo.ChunkHeight; y++)
-    //    //        {
-    //    //            for (int i = undergrounds.Length - 1; i >= 0; i--)
-    //    //            {
-    //    //                if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-    //    //                {
-    //    //                    map[x, y, z] = undergrounds[i].type;
-    //    //                }
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-    //}
-
-    ////나무 심기
-    //public void CreateTreeMap(Chunk chunk, ref int[,,] map)
-    //{
-    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-    //    //{
-    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-    //    //    {
-    //    //        int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-    //    //        for (int i = treePlacements.Length - 1; i >= 0; i--)
-    //    //        {
-    //    //            if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
-    //    //            {
-    //    //                CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-    //}
 
     private void CreateTreeMapWorld(Chunk chunk, ref int[,,] map, List<BlockOrder> orders)
     {
@@ -223,71 +183,6 @@ public class Biome : ScriptableObject
         //월드에게 local 좌표 + 청크 위치 값을 넘겨서 주기
         World.Instance.BiomeCallEdit(orders);
     }
-
-    //public void CreateCave(Chunk chunk, ref int[,,] map)
-    //{
-    //    ////땅 에서 랜덤으로 동굴 만들기
-
-    //    ////일단은 땅 위에서만 만들기로
-
-    //    //Vector3Int worldPosition;
-    //    //List<BlockOrder> orders = new();
-    //    //for (int x = 0; x < BlockInfo.ChunkWidth; x++)
-    //    //{
-    //    //    for (int z = 0; z < BlockInfo.ChunkWidth; z++)
-    //    //    {
-    //    //        if (Random.Range(0, 1f) > 0.999f)
-    //    //        {
-    //    //            int yHeight = Height(chunk.Position.x + x, chunk.Position.z + z);
-    //    //            Worm worm = Worm_Algorithm.Instance.Start(Worm_Algorithm.Dir, new Vector3Int(2, 2, 2), 100);
-
-    //    //            for (int i = 0; i < worm.pathRange.Count; i++)
-    //    //            {
-    //    //                if ((worm.pathRange[i].x + x >= 0 && worm.pathRange[i].x + x < BlockInfo.ChunkWidth) &&
-    //    //                    (worm.pathRange[i].y + yHeight >= 0 && worm.pathRange[i].y + yHeight < BlockInfo.ChunkHeight) &&
-    //    //                    (worm.pathRange[i].z + z >= 0 && worm.pathRange[i].z + z < BlockInfo.ChunkWidth))
-    //    //                {
-    //    //                    map[worm.pathRange[i].x + x, worm.pathRange[i].y + yHeight, worm.pathRange[i].z + z] = 0;
-    //    //                }
-    //    //                else
-    //    //                {
-    //    //                    worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-    //    //                    orders.Add(new BlockOrder(worldPosition + worm.pathRange[i], 0));
-    //    //                }
-    //    //            }
-
-    //    //            for (int i = 0; i < worm.pathWall.Count; i++)
-    //    //            {
-    //    //                if (Random.Range(0, 1f) > 0.99f)
-    //    //                {
-    //    //                    //광물이 설치될 모양을 선택
-    //    //                    //일단은 chair로 고정
-
-    //    //                    Vector3Int[] c = Chair(worm.pathWall[i].dir);
-    //    //                    for (int index = 0; index < c.Length;  index++)
-    //    //                    {
-    //    //                        //방향도 설정해야 함
-    //    //                        if ((worm.pathWall[i].position.x + x + c[index].x >= 0 && worm.pathWall[i].position.x + x + c[index].x < BlockInfo.ChunkWidth) &&
-    //    //                        (worm.pathWall[i].position.y + yHeight + c[index].y >= 0 && worm.pathWall[i].position.y + yHeight + c[index].y < BlockInfo.ChunkHeight) &&
-    //    //                        (worm.pathWall[i].position.z + z + c[index].z >= 0 && worm.pathWall[i].position.z + z + c[index].z < BlockInfo.ChunkWidth))
-    //    //                        {
-    //    //                            //자신의 청크 범위 안
-    //    //                            map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + yHeight + c[index].y, worm.pathWall[i].position.z + z + c[index].z] = (int)GameManager.BLCOK_ENUM.CoalOre;
-    //    //                        }
-    //    //                        else
-    //    //                        {
-    //    //                            //자신의 청크 범위 밖
-    //    //                            worldPosition = new Vector3Int(chunk.Position.x + x, yHeight, chunk.Position.z + z);
-    //    //                            orders.Add(new BlockOrder(worldPosition + worm.pathWall[i].position + c[index], (int)GameManager.BLCOK_ENUM.CoalOre));
-    //    //                        }
-    //    //                    }
-    //    //                }
-    //    //            }
-    //    //        }
-    //    //    }
-    //    //}
-    //    //World.Instance.BiomeCallEdit(orders);
-    //}
 
     public void CreateCave(int x, int y, int z, Chunk chunk, ref int[,,] map)
     {
@@ -323,35 +218,7 @@ public class Biome : ScriptableObject
         //광물 만드는 단계 (광물을 만드는 단계는 동굴을 만드는 것과는 별계의 확률로 독자적임)
         for (int i = 0; i < worm.pathWall.Count; i++)
         {
-            if (Random.Range(0, 1f) > 0.99f)
-            {
-                //광물이 설치될 모양을 선택
-                //일단은 chair로 고정
-
-                Vector3Int[] c = BlockInfo.Chair(worm.pathWall[i].dir);
-                for (int index = 0; index < c.Length; index++)
-                {
-                    //자신의 청크 범위 안
-                    if ((worm.pathWall[i].position.x + x + c[index].x >= 0 && worm.pathWall[i].position.x + x + c[index].x < BlockInfo.ChunkWidth) &&
-                    (worm.pathWall[i].position.y + y + c[index].y >= 0 && worm.pathWall[i].position.y + y + c[index].y < BlockInfo.ChunkHeight) &&
-                    (worm.pathWall[i].position.z + z + c[index].z >= 0 && worm.pathWall[i].position.z + z + c[index].z < BlockInfo.ChunkWidth))
-                    {
-                        //배드락 예외처리
-                        if (map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + y + c[index].y, worm.pathWall[i].position.z + z + c[index].z] != (int)GameManager.BLCOK_ENUM.Bedrock
-                            && map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + y + c[index].y, worm.pathWall[i].position.z + z + c[index].z] != 0)
-                        {
-                            map[worm.pathWall[i].position.x + x + c[index].x, worm.pathWall[i].position.y + y + c[index].y, worm.pathWall[i].position.z + z + c[index].z] = (int)GameManager.BLCOK_ENUM.CoalOre;
-                        }
-                    }
-                    else
-                    {
-                        //월드가 알아서 배드락은 예외처리 해줌
-                        //자신의 청크 범위 밖
-                        worldPosition = new Vector3Int(chunk.Position.x + x, y, chunk.Position.z + z);
-                        orders.Add(new BlockOrder(worldPosition + worm.pathWall[i].position + c[index], (int)GameManager.BLCOK_ENUM.CoalOre));
-                    }
-                }
-            }
+            CreateMineral(x, worm.pathWall[i].position.y + y, z, chunk, ref map, GameManager.Instance.Mineral(worm.pathWall[i].position.y + y, y, 0.01f));
         }
 
 

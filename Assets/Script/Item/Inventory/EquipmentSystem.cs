@@ -19,9 +19,9 @@ public class EquipmentSystem : MonoBehaviour
     public KeyCode KeyCode { get { return _keyCode; } set { _keyCode = value; } }
 
     //변경가능
-    public ItemSlot weaponSlot { get { return equipStorage.Slots[4]; } }
-    public IWeapon weapon { get { if (equipStorage.Slots[4].Item == null) return null; return equipStorage.Slots[4].Item as IWeapon; } }
-    public Item weaponItem { get { return equipStorage.Slots[4].Item; } }
+    public ItemSlot WeaponSlot { get { return equipStorage.Slots[4]; } }
+    public IWeapon Weapon { get { if (equipStorage.Slots[4].Item == null) return null; return equipStorage.Slots[4].Item as IWeapon; } }
+    public Item WeaponItem { get { return equipStorage.Slots[4].Item; } }
 
     [SerializeField]
     private AttackMotionSlot[] attackMotionSlots;
@@ -54,16 +54,6 @@ public class EquipmentSystem : MonoBehaviour
         for(int i = 0; i < attackMotionSlots.Length; i++)
         {
             attackMotionSlots[i].Init(player, i);
-        }
-
-        int amount = equipStorage.Acquire(GameManager.Instance.GetItem(4), 1);
-        if (amount == 0)
-        {
-            Debug.Log("아이템 생성");
-        }
-        else
-        {
-            Debug.Log(amount + "만큼 아이템 생성 실패");
         }
     }
 

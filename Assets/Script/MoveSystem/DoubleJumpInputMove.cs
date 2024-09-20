@@ -1,23 +1,23 @@
 using UnityEngine;
 
-public class DoubleJumpInputMove : IInputMove
+public class DoubleJumpInputMove : JumpInputMove , IInputMove
 {
     readonly StateMachine _machine;
     readonly JumpInputMove _system;
     bool jump = false;
     float lastClickTime = 0f;
     readonly float delay = 0.2f;
-    public DoubleJumpInputMove(StateMachine machine, JumpInputMove jumpSystem)
+    public DoubleJumpInputMove(StateMachine machine, JumpInputMove jumpSystem) : base(machine)
     {
         _machine = machine;
         _system = jumpSystem;
     }
 
-    public void InputMove(Transform transform, ref Vector3 velocity, ref Vector3 velocityMomemtum)
+    new public void InputMove(Transform transform, ref Vector3 velocity, ref Vector3 velocityMomemtum)
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if(!_system.isJump)
+            if(!_system.IsJump)
             {
                 _system.Jump(ref velocityMomemtum, 7);
             }
@@ -34,7 +34,7 @@ public class DoubleJumpInputMove : IInputMove
         if (_machine.isGround)
         {
             jump = false;
-            _system.isJump = false;
+            _system.IsJump = false;
         }
     }
 }

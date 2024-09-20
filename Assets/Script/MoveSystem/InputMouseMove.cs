@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class InputMouseMove : IInputMove
 {
-    private Transform head;
-    private Transform body;
-    private float minVertical;
-    private float maxVertical;
+    private readonly Transform head;
+    private readonly Transform body;
+    private readonly float minVertical;
+    private readonly float maxVertical;
     //이것은 설정에 따라 달라져야 하니 설정을 참조받아 사용하는걸로
-    private float verticalSpeed = 1;
-    private float horizontalSpeed = 1;
+    private readonly float verticalSpeed = 1;
+    private readonly float horizontalSpeed = 1;
 
     public InputMouseMove(Transform head, Transform body, float min, float max)
     {

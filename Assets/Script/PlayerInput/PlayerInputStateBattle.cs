@@ -25,13 +25,13 @@ public class PlayerInputStateBattle : IPlayerInputSystem
     {
         this.player = player;
         this.equipmentSystem = equipmentSystem;
-        if (equipmentSystem.weapon != null)
+        if (equipmentSystem.Weapon != null)
         {
-            Debug.Log(equipmentSystem.weapon);
-            attackModule = new AttackModule(equipmentSystem.weapon.MotionCount, player.STAT);
-            EquipToMotion(equipmentSystem.weaponSlot);
+            Debug.Log(equipmentSystem.Weapon);
+            attackModule = new AttackModule(equipmentSystem.Weapon.MotionCount, player.STAT);
         }
-        equipmentSystem.weaponSlot.AfterUpdate += EquipToMotion;
+        EquipToMotion(equipmentSystem.WeaponSlot);
+        equipmentSystem.WeaponSlot.AfterUpdate += EquipToMotion;
 
         attackMotionTree = new AttackMotionTree(player);
         attackmotionInterface = attackMotionInterface;

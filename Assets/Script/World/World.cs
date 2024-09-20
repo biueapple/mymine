@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class World : MonoBehaviour
 {
@@ -34,8 +33,7 @@ public class World : MonoBehaviour
     {
         get
         {
-            if (biomes == null)
-                biomes = Resources.LoadAll<Biome>("Biome");
+            biomes ??= Resources.LoadAll<Biome>("Biome");
             return biomes;
         }
     }
@@ -215,7 +213,7 @@ public class World : MonoBehaviour
         }
 
         //청크 바깥 없는 존재 불투명 (그리지 않음)
-        return true;
+        return false;
     }
 
     public bool WorldBlockPositionSolid(Vector3 position)

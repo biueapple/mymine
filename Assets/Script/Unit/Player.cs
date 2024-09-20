@@ -79,6 +79,9 @@ public class Player : Unit
         stateNomal = new PlayerInputStateNomal(this, inventory);
         stateBattle = new PlayerInputStateBattle(this, equipment, attackMotionInterface);
         playerInput = stateNomal;
+
+        STAT.Be_Attacked_Burn(new DotInfomation(STAT, 10, 10));
+        //Debug.Log(moveSystem.FindMoveMode<JumpInputMove>());
     }
 
     // Update is called once per frame

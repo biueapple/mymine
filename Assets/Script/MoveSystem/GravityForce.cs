@@ -4,8 +4,8 @@ public class GravityForce : IExternalForce
 {
     public bool Remove { get { return false; } }
     private float power = 0;
-    private float maxPower = 2.5f;
-    private StateMachine stateMachine;
+    private readonly float maxPower = 2.5f;
+    private readonly StateMachine stateMachine;
 
     public GravityForce(StateMachine stateMachine)
     { this.stateMachine = stateMachine; }

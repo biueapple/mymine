@@ -11,10 +11,15 @@ public class Dot_Poison
     [NonSerialized]
     private readonly Stat master;
     [NonSerialized]
+    private readonly MoveSystem moveSystem;
+    [NonSerialized]
     private Coroutine coroutine;
+    [NonSerialized]
+    private IStateShift stateShift;
     public Dot_Poison(Stat master, DotInfomation dotInfomation)
     {
         this.master = master;
+        moveSystem = master.GetComponent<MoveSystem>();
         list = new();
         Dot(dotInfomation);
     }
@@ -22,8 +27,7 @@ public class Dot_Poison
     public void Dot(DotInfomation infomation)
     {
         list.Add(infomation);
-        if (coroutine == null)
-            coroutine = master.StartCoroutine(Duration());
+        coroutine ??= master.StartCoroutine(Duration());
     }
 
     private void Damage()
@@ -41,6 +45,8 @@ public class Dot_Poison
 
     private IEnumerator Duration()
     {
+        if (moveSystem != null)
+            stateShift = moveSystem.Slow(0.5f);
         while (list.Count > 0)
         {
             yield return new WaitForSeconds(master.DotTime);
@@ -48,5 +54,7 @@ public class Dot_Poison
             list.ForEach(x => x.Duration -= 1);
             list.Remove(list.Find(x => x.Duration <= 0));
         }
+        if (moveSystem != null)
+            moveSystem.RemoveMoveMode(stateShift);
     }
 }

@@ -15,20 +15,21 @@ public class Dot_Burn
     [NonSerialized]
     private Coroutine coroutine;
     [NonSerialized]
-    private IStateShift stateShift;
+    private readonly JumpInputMove jump;
     public Dot_Burn(Stat master, DotInfomation dotInfomation)
     {
         this.master = master;
         moveSystem = master.GetComponent<MoveSystem>();
         list = new();
+        jump = moveSystem.FindMoveMode<JumpInputMove>();
+        Debug.Log(jump);
         Dot(dotInfomation);
     }
 
     public void Dot(DotInfomation infomation)
     {
         list.Add(infomation);
-        if (coroutine == null)
-            coroutine = master.StartCoroutine(Duration());
+        coroutine ??= master.StartCoroutine(Duration());
     }
 
     private void Damage()
@@ -46,8 +47,8 @@ public class Dot_Burn
 
     private IEnumerator Duration()
     {
-        if(moveSystem != null)
-            stateShift = moveSystem.Slow(0.5f);
+        if (moveSystem != null)
+            moveSystem.RemoveMoveMode(jump);
         while (list.Count > 0)
         {
             yield return new WaitForSeconds(master.DotTime);
@@ -56,6 +57,6 @@ public class Dot_Burn
             list.Remove(list.Find(x => x.Duration <= 0));
         }
         if (moveSystem != null)
-            moveSystem.RemoveMoveMode(stateShift);
+            moveSystem.AddMoveMode(jump);
     }
 }

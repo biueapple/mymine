@@ -7,7 +7,7 @@ public class JumpInputMove : IInputMove
     public StateMachine Machine { get { return _machine; } }
     [SerializeField]
     private bool jump = false;
-    public bool isJump { get { return jump; } set { jump = value; } }
+    public bool IsJump { get { return jump; } set { jump = value; } }
     public JumpInputMove(StateMachine machine)
     {
         _machine = machine;

@@ -144,10 +144,9 @@ public class GameManager : MonoBehaviour
         allBlock.Add(block.ID, block);
     }
 
-    public (Vector3Int[], int) Mineral(int y, int yHeight)
+    public (Vector3Int[], int) Mineral(int y, int yHeight, float mineralAppearanceProbability)
     {
-        // 전체적으로 광물이 나타날 확률 (예를 들어, 0.05는 5%의 확률을 의미)
-        float mineralAppearanceProbability = 0.0005f;
+        // mineralAppearanceProbability 전체적으로 광물이 나타날 확률 (예를 들어, 0.05는 5%의 확률을 의미)
 
         // 광물이 나타날 확률을 먼저 계산
         if (Random.Range(0f, 1f) > mineralAppearanceProbability)

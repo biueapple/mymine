@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Test : MonoBehaviour
 {
-
+    public Player player;
     public GameObject cube1;
 
     public GameObject cube2;
@@ -20,32 +20,33 @@ public class Test : MonoBehaviour
 
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(scarecrow.STAT, 10, 1));
         //player.STAT.Be_Attacked_Bleeding(new DotInfomation(player.STAT, 10, 1));
+        //player.STAT.Be_Attacked_Burn(new DotInfomation(player.STAT, 10, 10));
 
-        List<(Vector3Int, int)> dir = new()
-        {
-            (new Vector3Int(1, 0, 0), 6),
-            (new Vector3Int(-1, 0, 0), 6),
-            (new Vector3Int(0, 0, 1), 6),
-            (new Vector3Int(0, 0, -1), 6),
-            (new Vector3Int(0, -1, 0), 8),
-            (new Vector3Int(0, 1, 0), 1)
-        };
-        Worm worm = Worm_Algorithm.Instance.Start(dir, new Vector3Int(2, 2, 2), 100);
+        //List<(Vector3Int, int)> dir = new()
+        //{
+        //    (new Vector3Int(1, 0, 0), 6),
+        //    (new Vector3Int(-1, 0, 0), 6),
+        //    (new Vector3Int(0, 0, 1), 6),
+        //    (new Vector3Int(0, 0, -1), 6),
+        //    (new Vector3Int(0, -1, 0), 8),
+        //    (new Vector3Int(0, 1, 0), 1)
+        //};
+        //Worm worm = Worm_Algorithm.Instance.Start(dir, new Vector3Int(2, 2, 2), 100);
 
-        for (int i = 0; i < worm.path.Count; i++)
-        {
-            Instantiate(cube1, worm.path[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.path.Count; i++)
+        //{
+        //    Instantiate(cube1, worm.path[i], Quaternion.identity);
+        //}
 
-        for (int i = 0; i < worm.pathRange.Count; i++)
-        {
-            Instantiate(cube2, worm.pathRange[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.pathRange.Count; i++)
+        //{
+        //    Instantiate(cube2, worm.pathRange[i], Quaternion.identity);
+        //}
 
-        for (int i = 0; i < worm.pathWall.Count; i++)
-        {
-            Instantiate(cube3, worm.pathWall[i].position, Quaternion.identity);
-        }
+        //for (int i = 0; i < worm.pathWall.Count; i++)
+        //{
+        //    Instantiate(cube3, worm.pathWall[i].position, Quaternion.identity);
+        //}
     }
 
     void Update()

@@ -27,7 +27,7 @@ public class PlayerInputStateAming : IPlayerInputSystem
     private List<Substance> enemy = new();
     public Substance[] Enemy { get { return enemy.ToArray(); } }
 
-    private Sight sight;
+    private readonly Sight sight;
     public PlayerInputStateAming(Camera camera, Player player, Canvas canvas, ProjectileObject[] projectileObjects)
     {
         mainCamera = camera;

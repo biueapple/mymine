@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class MoveSystem : MonoBehaviour
 {
@@ -38,45 +36,18 @@ public class MoveSystem : MonoBehaviour
     /// </summary>
     private readonly List<IMoveInputCallback> _inputCallback = new ();
     public List<IMoveInputCallback> InputCallbacks { get { return _inputCallback; } }
-    //public IMoveInputCallback InputCallback 
-    //{ set
-    //    {
-    //        if (_inputCallback.Contains(value))
-    //            _inputCallback.Remove(value);
-    //        else
-    //            _inputCallback.Add(value);
-    //    }
-    //}
+
     /// <summary>
     /// 그 입력이 실제로 얼마의 움직임을 낼 수 있었는지
     /// </summary>
     private readonly List<IMoveCallback> _moveCallback = new();
     public List<IMoveCallback> MoveCallbacks { get { return _moveCallback; } }
-    //public IMoveCallback MoveCallback
-    //{
-    //    set
-    //    {
-    //        if (_moveCallback.Contains(value))
-    //            _moveCallback.Remove(value);
-    //        else
-    //            _moveCallback.Add(value);
-    //    }
-    //}
+
     /// <summary>
     /// 실제로 움직여진 양이 얼마인지
     /// </summary>
     private readonly List<IMovePhysicsCallback> _movePhysicsCallback = new ();
     public List<IMovePhysicsCallback> MovePhysicsCallbacks { get { return _movePhysicsCallback; } }
-    //public IMovePhysicsCallback MovePhysicsCallback
-    //{
-    //    set
-    //    {
-    //        if (_movePhysicsCallback.Contains(value))
-    //            _movePhysicsCallback.Remove(value);
-    //        else
-    //            _movePhysicsCallback.Add(value);
-    //    }
-    //}
     //왜 외부적인 힘단계가 1단계였는지 모르겠음
 
     //입력단계 (움직임에 대한 입력을 받는 단계 {velocity})                                                   플레이어가 움직이기 위해 키를 누름
@@ -171,6 +142,7 @@ public class MoveSystem : MonoBehaviour
 
     private void Move()
     {
+        _velocity *= Time.deltaTime;
         _velocity += _velocityMomemtum * Time.deltaTime;
         transform.Translate(_velocity, Space.World);
     }
@@ -292,10 +264,6 @@ public class MoveSystem : MonoBehaviour
                 return physics;
         return null;
     }
-    public void AddMoveMode(IExternalForce externalForce)
-    {
-        externalForces.Add(externalForce);
-    }
     public void AddMoveMode(IInputMove inputMove)
     {
         inputMoves.Add(inputMove);
@@ -308,13 +276,13 @@ public class MoveSystem : MonoBehaviour
     {
         stateShifts.Add(stateShift);
     }
+    public void AddMoveMode(IExternalForce externalForce)
+    {
+        externalForces.Add(externalForce);
+    }
     public void AddMoveMode(IPhysicsShift physicsShift)
     {
         physicsShifts.Add(physicsShift);
-    }
-    public void RemoveMoveMode(IExternalForce externalForce)
-    {
-        externalForces.Remove(externalForce);
     }
     public void RemoveMoveMode(IInputMove inputMove)
     {
@@ -327,6 +295,10 @@ public class MoveSystem : MonoBehaviour
     public void RemoveMoveMode(IStateShift stateShift)
     {
         stateShifts.Remove(stateShift);
+    }
+    public void RemoveMoveMode(IExternalForce externalForce)
+    {
+        externalForces.Remove(externalForce);
     }
     public void RemoveMoveMode(IPhysicsShift physicsShift)
     {
@@ -355,11 +327,11 @@ public class AutoJump : IInputMove
         Vector3 dir = new (velocity.x, 0, velocity.z);
 
         if (inputMove.Machine.isGround)
-            inputMove.isJump = false;
+            inputMove.IsJump = false;
 
         if (!Empty(transform.position + dir))
         {
-            if (inputMove != null && !inputMove.isJump)
+            if (inputMove != null && !inputMove.IsJump)
                 inputMove.Jump(ref velocityMomemtum);
         }
     }
@@ -458,7 +430,7 @@ public class AutoMove : IInputMove
             else
             {
                 Vector3 vectpr = (points[0] - unit.transform.position);
-                velocity = Time.deltaTime * unit.STAT.Speed * new Vector3(vectpr.x, 0, vectpr.z).normalized;
+                velocity = unit.STAT.Speed * new Vector3(vectpr.x, 0, vectpr.z).normalized;
             }
         }
     }
