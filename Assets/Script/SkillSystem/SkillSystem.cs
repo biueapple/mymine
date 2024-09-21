@@ -115,7 +115,7 @@ public class SkillSystem : MonoBehaviour
             }
         }
 
-        if(Input.GetKeyDown(KeyCode.K))
+        if(Input.GetKeyDown(player.PlayerSetting.skill))
         {
             if(warriorTree.gameObject.activeSelf)
             {

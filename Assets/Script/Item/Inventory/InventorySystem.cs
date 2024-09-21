@@ -15,9 +15,6 @@ public class InventorySystem : MonoBehaviour
     [SerializeField]
     private HotkeyInterface hotkey;
     public HotkeyInterface HotkeyInterface { get { return hotkey; } }
-    [SerializeField]
-    private KeyCode _keyCode = KeyCode.I;
-    public KeyCode KeyCode { get { return _keyCode; } set { _keyCode = value; } }
 
     // Start is called before the first frame update
     void Awake()
@@ -95,7 +92,7 @@ public class InventorySystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(_keyCode))
+        if (Input.GetKeyDown(player.PlayerSetting.inventory))
         {
             //클릭중인 아이템을 처리해야함 던지던가
             if (!inventory.gameObject.activeSelf)

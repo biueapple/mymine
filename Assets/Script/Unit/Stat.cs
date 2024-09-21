@@ -433,41 +433,42 @@ public class Stat : MonoBehaviour
         //Save();
     }
 
-    //저장 경로 : C:\Users\사용자명\AppData\LocalLow\DefaultCompany\My InventorySystem
-    public void Save()
-    {
-        //try
-        //{
-        //    IFormatter formatter = new BinaryFormatter();
-        //    Stream stream = new FileStream(string.Concat(Application.persistentDataPath, "/Skills"), FileMode.Create, FileAccess.Write);
-        //    formatter.Serialize(stream, callbackController.Skills);
-        //    stream.Close();
-        //}
-        //catch (Exception ex)
-        //{
-        //    Debug.LogError($"예외 발생: {ex.Message}");
-        //}
-    }
+    //세이브와 로드는 loadsavemanager에게 넘겼음
+    ////저장 경로 : C:\Users\사용자명\AppData\LocalLow\DefaultCompany\My InventorySystem
+    //public void Save()
+    //{
+    //    //try
+    //    //{
+    //    //    IFormatter formatter = new BinaryFormatter();
+    //    //    Stream stream = new FileStream(string.Concat(Application.persistentDataPath, "/Skills"), FileMode.Create, FileAccess.Write);
+    //    //    formatter.Serialize(stream, callbackController.Skills);
+    //    //    stream.Close();
+    //    //}
+    //    //catch (Exception ex)
+    //    //{
+    //    //    Debug.LogError($"예외 발생: {ex.Message}");
+    //    //}
+    //}
 
-    //불러오기 경로 : C:\Users\사용자명\AppData\LocalLow\DefaultCompany\My InventorySystem
-    public void Load()
-    {
-        //if (File.Exists(string.Concat(Application.persistentDataPath, "/Skills")))
-        //{
-        //    IFormatter formatter = new BinaryFormatter();
-        //    Stream stream = new FileStream(string.Concat(Application.persistentDataPath, "/Skills"), FileMode.Open, FileAccess.Read);
-        //    List<ISkill> newContainer = (List<ISkill>)formatter.Deserialize(stream);
-        //    for(int i = 0; i < newContainer.Count; i++)
-        //    {
-        //        callbackController.AcquisitionSkill(newContainer[i]);
-        //    }
-        //    for (int i = 0; i < callbackController.Skills.Count; i++)
-        //    {
-        //        callbackController.Skills[i].Stat = this;
-        //    }
-        //    stream.Close();
-        //}
-    }
+    ////불러오기 경로 : C:\Users\사용자명\AppData\LocalLow\DefaultCompany\My InventorySystem
+    //public void Load()
+    //{
+    //    //if (File.Exists(string.Concat(Application.persistentDataPath, "/Skills")))
+    //    //{
+    //    //    IFormatter formatter = new BinaryFormatter();
+    //    //    Stream stream = new FileStream(string.Concat(Application.persistentDataPath, "/Skills"), FileMode.Open, FileAccess.Read);
+    //    //    List<ISkill> newContainer = (List<ISkill>)formatter.Deserialize(stream);
+    //    //    for(int i = 0; i < newContainer.Count; i++)
+    //    //    {
+    //    //        callbackController.AcquisitionSkill(newContainer[i]);
+    //    //    }
+    //    //    for (int i = 0; i < callbackController.Skills.Count; i++)
+    //    //    {
+    //    //        callbackController.Skills[i].Stat = this;
+    //    //    }
+    //    //    stream.Close();
+    //    //}
+    //}
 
     //
     //밑에 함수와는 다른점이 hp mp barriar 밖에 없음

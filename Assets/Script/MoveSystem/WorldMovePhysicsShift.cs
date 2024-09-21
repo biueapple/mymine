@@ -15,7 +15,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
     {
         if (velocity.y + momemtum.y * Time.deltaTime > 0)
         {
-            if (Up(transform.position, velocity.y + momemtum.y * Time.deltaTime))
+            if (Up(transform.position, (velocity.y + momemtum.y) * Time.deltaTime))
             {
                 if (velocity.y > 0)
                     velocity.y = 0;
@@ -28,7 +28,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
         else
         {
             //아래에 블록이 있는지
-            if (Down(transform.position, velocity.y + momemtum.y * Time.deltaTime))
+            if (Down(transform.position, (velocity.y + momemtum.y) * Time.deltaTime))
             {
                 if (velocity.y < 0)
                     velocity.y = 0;
@@ -46,7 +46,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
         }
         if (velocity.z + momemtum.z * Time.deltaTime > 0)
         {
-            if (Front(transform.position, velocity.z + momemtum.z * Time.deltaTime))
+            if (Front(transform.position, (velocity.z + momemtum.z) * Time.deltaTime))
             {
                 if (velocity.z > 0)
                 {
@@ -60,7 +60,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
         }
         else
         {
-            if (Back(transform.position, velocity.z + momemtum.z * Time.deltaTime))
+            if (Back(transform.position, (velocity.z + momemtum.z) * Time.deltaTime))
             {
                 if (velocity.z < 0)
                 {
@@ -74,7 +74,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
         }
         if (velocity.x + momemtum.x * Time.deltaTime > 0)
         {
-            if (Right(transform.position, velocity.x + momemtum.x * Time.deltaTime))
+            if (Right(transform.position, (velocity.x + momemtum.x) * Time.deltaTime))
             {
                 if (velocity.x > 0)
                 {
@@ -88,7 +88,7 @@ public class WorldMovePhysicsShift : IPhysicsShift
         }
         else
         {
-            if (Left(transform.position, velocity.x + momemtum.x * Time.deltaTime))
+            if (Left(transform.position, (velocity.x + momemtum.x) * Time.deltaTime))
             {
                 if (velocity.x < 0)
                 {
@@ -185,7 +185,10 @@ public class WorldMovePhysicsShift : IPhysicsShift
         else
         {
             if (World.Instance.WorldBlockPositionSolid(new Vector3(position.x, position.y, position.z + z)))
+            {
                 return true;
+            }
+                
             return false;
         }
     }

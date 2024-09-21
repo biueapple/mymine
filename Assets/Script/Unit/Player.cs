@@ -49,16 +49,34 @@ public class Player : Unit
     [SerializeField]
     private AttackMotionInterface attackMotionInterface;
 
+    [SerializeField]
+    private PlayerSetting playerSetting;
+    public PlayerSetting PlayerSetting { get { return playerSetting; } }
+
     // Start is called before the first frame update
     void Start()
     {
+        //세팅을 가장 처음에 로드 해야함
+        if(LoadSaveManager.Instance.Load(ref playerSetting, "PlayerSetting"))
+        {
+            Debug.Log("플레이어 설정이 로드됨 " + playerSetting);
+            //플레이어 설정이 로드됨
+        }
+        else
+        {
+            playerSetting = new PlayerSetting();
+            Debug.Log("플레이어 설정이 로드되지 않음 " + playerSetting);
+            //플레이어 설정이 로드되지 않음
+        }
+        
+
         animator = GetComponent<Animator>();
         inventory = GetComponent<InventorySystem>();
         equipment = GetComponent<EquipmentSystem>();
         skillSystem = GetComponent<SkillSystem>();
 
         moveSystem.AddMoveMode(new InputKeyMove(stat));
-        moveSystem.AddMoveMode(new InputMouseMove(head, transform, -70, 70));
+        moveSystem.AddMoveMode(new InputMouseMove(head, transform, -70, 70, playerSetting));
         JumpInputMove jumpSystem = new(moveSystem.Machine);
 
         moveSystem.AddMoveMode(new DoubleJumpInputMove(moveSystem.Machine, jumpSystem));
@@ -80,7 +98,6 @@ public class Player : Unit
         stateBattle = new PlayerInputStateBattle(this, equipment, attackMotionInterface);
         playerInput = stateNomal;
 
-        STAT.Be_Attacked_Burn(new DotInfomation(STAT, 10, 10));
         //Debug.Log(moveSystem.FindMoveMode<JumpInputMove>());
     }
 
@@ -117,14 +134,14 @@ public class Player : Unit
             playerInput?.RightUp();
         }
 
-        if(Input.GetKeyDown(KeyCode.B))
+        if(Input.GetKeyDown(playerSetting.mode))
         {
             ModeChange();
         }
-        else if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Aiming();
-        }
+        //else if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    Aiming();
+        //}
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -212,4 +229,9 @@ public class Player : Unit
         }
     }
 
+
+    private void OnApplicationQuit()
+    {
+        LoadSaveManager.Instance.Save(playerSetting, "PlayerSetting");
+    }
 }

@@ -7,20 +7,20 @@ public class InputMouseMove : IInputMove
     private readonly float minVertical;
     private readonly float maxVertical;
     //이것은 설정에 따라 달라져야 하니 설정을 참조받아 사용하는걸로
-    private readonly float verticalSpeed = 1;
-    private readonly float horizontalSpeed = 1;
+    private PlayerSetting playerSetting;
 
-    public InputMouseMove(Transform head, Transform body, float min, float max)
+    public InputMouseMove(Transform head, Transform body, float min, float max, PlayerSetting playerSetting)
     {
         this.head = head;
         this.body = body;
         this.minVertical = min;
         this.maxVertical = max;
+        this.playerSetting = playerSetting;
     }
 
     public void InputMove(Transform transform, ref Vector3 velocity, ref Vector3 velocityMomemtum)
     {
-        Update(Input.GetAxisRaw("Mouse X") * horizontalSpeed, -Input.GetAxisRaw("Mouse Y") * verticalSpeed);
+        Update(Input.GetAxisRaw("Mouse X") * playerSetting.horizontalSpeed, -Input.GetAxisRaw("Mouse Y") * playerSetting.verticalSpeed);
     }
 
     private void Update(float mouseHorizontal, float mouseVertical)

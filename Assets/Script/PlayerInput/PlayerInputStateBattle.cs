@@ -79,7 +79,7 @@ public class PlayerInputStateBattle : IPlayerInputSystem
     readonly Sight sight;
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.L))
+        if(Input.GetKeyDown(player.PlayerSetting.motion))
         {
             if(attackmotionInterface.gameObject.activeSelf)
             {

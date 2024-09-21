@@ -108,35 +108,35 @@ public class Biome : ScriptableObject
                             map[x, y, z] = nomalType;
 
 
-                        //지하 만들기
-                        for (int i = undergrounds.Length - 1; i >= 0; i--)
-                        {
-                            if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
-                            {
-                                map[x, y, z] = undergrounds[i].type;
-                            }
-                        }
-                        CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight, 0.0005f));
+                        ////지하 만들기
+                        //for (int i = undergrounds.Length - 1; i >= 0; i--)
+                        //{
+                        //    if (undergrounds[i].MakeUnderground(x + chunk.Position.x, y, z + chunk.Position.z, yHeight))
+                        //    {
+                        //        map[x, y, z] = undergrounds[i].type;
+                        //    }
+                        //}
+                        //CreateMineral(x, y, z, chunk, ref map, GameManager.Instance.Mineral(y, yHeight, 0.0005f));
                     }
                 }
 
-                //나무 만들기
-                for (int i = treePlacements.Length - 1; i >= 0; i--)
-                {
-                    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
-                    {
-                        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
-                    }
-                }
+                ////나무 만들기
+                //for (int i = treePlacements.Length - 1; i >= 0; i--)
+                //{
+                //    if (treePlacements[i].MakeTree(x + chunk.Position.x, z + chunk.Position.z))
+                //    {
+                //        CreateTreeMapWorld(chunk, ref map, treePlacements[i].CreateTree(new Vector3Int(x, yHeight, z)));
+                //    }
+                //}
 
-                //동굴 만들기
-                if (cavePlacement != null)
-                {
-                    if (Random.Range(0f, 1f) <= cavePlacement.probability)
-                    {
-                        CreateCave(x, yHeight, z, chunk, ref map);
-                    }
-                }
+                ////동굴 만들기
+                //if (cavePlacement != null)
+                //{
+                //    if (Random.Range(0f, 1f) <= cavePlacement.probability)
+                //    {
+                //        CreateCave(x, yHeight, z, chunk, ref map);
+                //    }
+                //}
 
             }
         }

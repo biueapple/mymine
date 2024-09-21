@@ -14,10 +14,6 @@ public class EquipmentSystem : MonoBehaviour
     private Player player;
     private Stat stat;
 
-    [SerializeField]
-    private KeyCode _keyCode = KeyCode.E;
-    public KeyCode KeyCode { get { return _keyCode; } set { _keyCode = value; } }
-
     //변경가능
     public ItemSlot WeaponSlot { get { return equipStorage.Slots[4]; } }
     public IWeapon Weapon { get { if (equipStorage.Slots[4].Item == null) return null; return equipStorage.Slots[4].Item as IWeapon; } }
@@ -59,7 +55,7 @@ public class EquipmentSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(_keyCode))
+        if (Input.GetKeyDown(player.PlayerSetting.equip))
         {
             if(staticInterface.gameObject.activeSelf)
             {

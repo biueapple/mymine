@@ -1527,7 +1527,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec7b9b820e3695547877839d412e6a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  substances: []
+  substances:
+  - {fileID: 1104318450}
   height: 1.8
   width: 0.45
   depth: 0.3
