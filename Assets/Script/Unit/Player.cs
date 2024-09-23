@@ -54,8 +54,9 @@ public class Player : Unit
     public PlayerSetting PlayerSetting { get { return playerSetting; } }
 
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
+        //base.Awake();
         //세팅을 가장 처음에 로드 해야함
         if(LoadSaveManager.Instance.Load(ref playerSetting, "PlayerSetting"))
         {
@@ -166,6 +167,7 @@ public class Player : Unit
             else if(gameObject == null)
             {
                 Debug.Log("설정창 열기");
+                UIManager.Instance.OpenUI(Option.Instance.gameObject);
             }
         }
     }

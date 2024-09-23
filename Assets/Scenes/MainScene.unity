@@ -1538,6 +1538,14 @@ MonoBehaviour:
   aming: {fileID: 829328684}
   cam: {fileID: 1742338647}
   attackMotionInterface: {fileID: 6879608032757639376}
+  playerSetting:
+    verticalSpeed: 1
+    horizontalSpeed: 1
+    inventory: 105
+    equip: 101
+    skill: 107
+    mode: 98
+    motion: 108
   projectile: {fileID: 4163883857766682415, guid: fc8929706fc178247854727c3ec55122,
     type: 3}
 --- !u!114 &885182168
@@ -1555,7 +1563,6 @@ MonoBehaviour:
   equipStorage:
     slots: []
   staticInterface: {fileID: 1951290475}
-  _keyCode: 101
   attackMotionSlots:
   - {fileID: 3233248183798142078}
   - {fileID: 8981993957921371776}
@@ -1612,7 +1619,6 @@ MonoBehaviour:
     slots: []
   inventory: {fileID: 719103090}
   hotkey: {fileID: 2014301271}
-  _keyCode: 105
 --- !u!114 &885182173
 MonoBehaviour:
   m_ObjectHideFlags: 0
