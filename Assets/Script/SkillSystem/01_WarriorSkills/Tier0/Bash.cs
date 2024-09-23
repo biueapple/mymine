@@ -94,7 +94,10 @@ public class Bash : ISkill, IAttackTryCallback, IActiveSkill, IDamageIncreaseCal
 
     public void DamageIncrease(AttackInformation attackInformation)
     {
-        attackInformation.Additional.Add(new DamageInfomation(Damage, damageType, false));
+        if(attackInformation.AttackType == AttackType.NOMAL)
+        {
+            attackInformation.Additional.Add(new (Damage, damageType, false));
+        }
     }
 
     private IEnumerator CooltimerCoroutine()

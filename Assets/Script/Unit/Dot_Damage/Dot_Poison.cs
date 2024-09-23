@@ -13,8 +13,6 @@ public class Dot_Poison
     [NonSerialized]
     private readonly MoveSystem moveSystem;
     [NonSerialized]
-    private Coroutine coroutine;
-    [NonSerialized]
     private IStateShift stateShift;
     public Dot_Poison(Stat master, DotInfomation dotInfomation)
     {
@@ -27,7 +25,7 @@ public class Dot_Poison
     public void Dot(DotInfomation infomation)
     {
         list.Add(infomation);
-        coroutine ??= master.StartCoroutine(Duration());
+        master.StartCoroutine(Duration());
     }
 
     private void Damage()
@@ -37,7 +35,7 @@ public class Dot_Poison
                        .ToList();
         for (int i = 0; i < list.Count; i++)
         {
-            AttackInformation attackInformation = new (stats[i], AttackType.NONE);
+            AttackInformation attackInformation = new (stats[i], AttackType.DOT);
             attackInformation.Additional.Add(new (list.Where(x => x.Agent == stats[i]).Sum(x => x.Damage), DamageType.AP, false));
             master.Be_Attacked(attackInformation);
         }

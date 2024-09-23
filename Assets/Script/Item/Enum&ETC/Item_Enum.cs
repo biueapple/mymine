@@ -68,6 +68,7 @@ public enum AttackType
 {
     NONE,       //그냥 추가공격
     NOMAL,      //기본 공격
-    WEAPON,     //무기로 인한 공격
-    SPECIAL     //스킬같은걸로 인한 공격
+    SPECIAL,    //스킬같은걸로 인한 공격
+    DOT,
+
 }

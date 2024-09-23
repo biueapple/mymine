@@ -54,8 +54,8 @@ public class Increase : ISkill, IAttackTryCallback, IActiveSkill, IDamageIncreas
         maxLevel = 5;
         cooltime = 4;
         coefficients = new Coefficient[2];
-        coefficients[0] = new Coefficient(10, 10, Attribute_Property.AP, 0.5f);
-        coefficients[1] = new Coefficient(10, 10, Attribute_Property.AD, 0.5f);
+        coefficients[0] = new (10, 10, Attribute_Property.AP, 0.5f);
+        coefficients[1] = new (10, 10, Attribute_Property.AD, 0.5f);
         damageType = DamageType.AD;
         description = $"다음 기본공격에 <color=Orange>{Damage}</color> 만큼의 대미지가 추가됩니다";
         detailDescription =
@@ -88,7 +88,10 @@ public class Increase : ISkill, IAttackTryCallback, IActiveSkill, IDamageIncreas
 
     public void DamageIncrease(AttackInformation attackInformation)
     {
-        attackInformation.Additional.Add(new DamageInfomation(Damage, damageType, false));
+        if(attackInformation.AttackType == AttackType.NOMAL)
+        {
+            attackInformation.Additional.Add(new (Damage, damageType, false));
+        }
     }
 
     private IEnumerator CooltimerCoroutine()

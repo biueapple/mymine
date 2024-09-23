@@ -10,8 +10,6 @@ public class Dot_Bleeding
     private readonly List<DotInfomation> list;
     [NonSerialized]
     private readonly Stat master;
-    [NonSerialized]
-    private Coroutine coroutine;
     public Dot_Bleeding(Stat master, DotInfomation dotInfomation)
     {
         this.master = master;
@@ -22,8 +20,7 @@ public class Dot_Bleeding
     public void Dot(DotInfomation infomation)
     {
         list.Add(infomation);
-        if (coroutine == null)
-            coroutine = master.StartCoroutine(Duration());
+        master.StartCoroutine(Duration());
     }
 
     private void Damage()
@@ -40,7 +37,7 @@ public class Dot_Bleeding
                        .ToList();
         for (int i = 0; i < stats.Count; i++)
         {
-            AttackInformation attackInformation = new (stats[i], AttackType.NONE);
+            AttackInformation attackInformation = new (stats[i], AttackType.DOT);
             attackInformation.Additional.Add(new (list.Where(x => x.Agent == stats[i]).Sum(x => x.Damage), DamageType.AD, false));
             master.Be_Attacked(attackInformation);
         }

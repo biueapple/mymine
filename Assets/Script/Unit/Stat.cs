@@ -410,11 +410,11 @@ public class Stat : MonoBehaviour
             skillTryCallbacks[i].SkillTry();
     }
 
-    private void Awake()
-    {
-        //Load();
-        //dot 대미지들도 load해야함
-    }
+    //private void Awake()
+    //{
+    //    //Load();
+    //    //dot 대미지들도 load해야함
+    //}
 
     private void Start()
     {
@@ -423,15 +423,11 @@ public class Stat : MonoBehaviour
         barrier = original.barrier + elevated.barrier;
     }
 
-    private void Update()
-    {
 
-    }
-
-    private void OnApplicationQuit()
-    {
-        //Save();
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    //Save();
+    //}
 
     //세이브와 로드는 loadsavemanager에게 넘겼음
     ////저장 경로 : C:\Users\사용자명\AppData\LocalLow\DefaultCompany\My InventorySystem

@@ -13,8 +13,6 @@ public class Dot_Burn
     [NonSerialized]
     private readonly MoveSystem moveSystem;
     [NonSerialized]
-    private Coroutine coroutine;
-    [NonSerialized]
     private readonly JumpInputMove jump;
     public Dot_Burn(Stat master, DotInfomation dotInfomation)
     {
@@ -22,14 +20,13 @@ public class Dot_Burn
         moveSystem = master.GetComponent<MoveSystem>();
         list = new();
         jump = moveSystem.FindMoveMode<JumpInputMove>();
-        Debug.Log(jump);
         Dot(dotInfomation);
     }
 
     public void Dot(DotInfomation infomation)
     {
         list.Add(infomation);
-        coroutine ??= master.StartCoroutine(Duration());
+        master.StartCoroutine(Duration());
     }
 
     private void Damage()
@@ -39,7 +36,7 @@ public class Dot_Burn
                        .ToList();
         for (int i = 0; i < stats.Count; i++)
         {
-            AttackInformation attackInformation = new (stats[i], AttackType.NONE);
+            AttackInformation attackInformation = new (stats[i], AttackType.DOT);
             attackInformation.Additional.Add(new (list.Where(x => x.Agent == stats[i]).Sum(x => x.Damage), DamageType.AD, false));
             master.Be_Attacked(attackInformation);
         }

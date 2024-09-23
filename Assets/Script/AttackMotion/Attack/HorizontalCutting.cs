@@ -11,7 +11,7 @@ public class HorizontalCutting : IAttackMotion
     private readonly string name;
     public string Name { get { return name; } } 
 
-    private Sprite icon;
+    private readonly Sprite icon;
     public Sprite Icon { get { return icon; } }
 
     //범위의 시작지점
