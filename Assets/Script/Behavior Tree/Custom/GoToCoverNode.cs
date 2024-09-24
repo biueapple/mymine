@@ -22,10 +22,13 @@ public class GoToCoverNode : BehaviorTreeNode
         float distance = Vector3.Distance(coverSpot.position, ai.transform.position);
         if(distance > 0.2f)
         {
+            //¿Ãµø
+            ai.transform.Translate((coverSpot.position - ai.transform.position).normalized * Time.deltaTime);
             return NodeState.RUNNING;
         }
         else
         {
+            //∏ÿ√„
             return NodeState.SUCCESS;
         }
     }

@@ -16,6 +16,6 @@ public class HealthNode : BehaviorTreeNode
     public override NodeState Evaluate()
     {
         //ai의 체력이 threshold 보다 낮으면 성공 아니면 실패
-        return ai.GetCurrentHealth() <= threshold ? NodeState.SUCCESS : NodeState.FALIERE;
+        return ai.Health <= threshold ? NodeState.SUCCESS : NodeState.FALIERE;
     }
 }

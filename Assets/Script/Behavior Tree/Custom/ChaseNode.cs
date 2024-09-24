@@ -20,10 +20,13 @@ public class ChaseNode : BehaviorTreeNode
         float distance = Vector3.Distance(target.position, ai.transform.position);
         if(distance > 0.2f)
         {
+            //움직이게
+            ai.transform.Translate((target.position - ai.transform.position).normalized * Time.deltaTime);
             return NodeState.RUNNING;
         }
         else
         {
+            //안움직이게
             return NodeState.SUCCESS;
         }
     }

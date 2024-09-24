@@ -41,6 +41,13 @@ public class IsCovereAvaliableNode : BehaviorTreeNode
 
     private Transform FindBestSpotInCover(Cover cover, ref float minAngle)
     {
+        if(ai.GetBestCoverSpot() != null)
+        {
+            if(CheckIfSpotIsValid(ai.GetBestCoverSpot()))
+            {
+                return ai.GetBestCoverSpot();
+            }
+        }
         Transform[] avaliableSpots = cover.GetCoverSpots();
         Transform bestSpot = null;
         for(int i = 0; i < avaliableSpots.Length; i++)

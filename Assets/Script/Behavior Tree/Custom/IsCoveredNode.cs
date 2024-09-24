@@ -18,6 +18,13 @@ public class IsCoveredNode : BehaviorTreeNode
     {
         //target에게 ray를 쏴서 그것이 target이면 무언가가 둘 사이에 있다는 것이니 성공
         //아니면 실패
-        return NodeState.SUCCESS;
+        if(Physics.Raycast(origin.position, target.position - origin.position, out RaycastHit hit))
+        {
+            if(hit.collider.transform != target)
+            {
+                return NodeState.SUCCESS;
+            }
+        }
+        return NodeState.FALIERE;
     }
 }
