@@ -22,8 +22,13 @@ public class GoToCoverNode : BehaviorTreeNode
         float distance = Vector3.Distance(coverSpot.position, ai.transform.position);
         if(distance > 0.2f)
         {
+            Vector3 direction = coverSpot.position - ai.transform.position;
+            direction.y = 0; // Y축 회전을 제거
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            ai.transform.rotation = targetRotation;
             //이동
-            ai.transform.Translate((coverSpot.position - ai.transform.position).normalized * Time.deltaTime);
+            ai.transform.Translate((coverSpot.position - ai.transform.position).normalized * Time.deltaTime, Space.World);
             return NodeState.RUNNING;
         }
         else

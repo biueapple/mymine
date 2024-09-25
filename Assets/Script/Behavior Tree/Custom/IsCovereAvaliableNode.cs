@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//적을 상대로 숨는것을 성공했느냐
+//숨을 곳을 찾았는가
 public class IsCovereAvaliableNode : BehaviorTreeNode
 {
     //벽을 의미

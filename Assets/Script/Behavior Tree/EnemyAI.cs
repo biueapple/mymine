@@ -5,52 +5,54 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     [SerializeField]
-    private float maxHealth;
+    protected float maxHealth;
     [SerializeField]
-    private float health;
+    protected float health;
     public float Health { get { return health; } set {  health = Mathf.Clamp(value, 0, maxHealth); } }
     [SerializeField]
-    private float healthRestoreRate;
+    protected float healthRestoreRate;
 
     [SerializeField]
-    private float chaseRange;
+    protected float chaseRange;
     [SerializeField]
-    private float attackRange;
+    protected float minRange;
+    [SerializeField]
+    protected float attackInRnage;
 
     [SerializeField]
-    private Transform player;
+    protected Transform player;
     [SerializeField]
-    private Cover[] avaliableCovers;
+    protected Cover[] avaliableCovers;
 
-    private Material material;
+    protected Material material;
 
-    private Transform bestCoverSpot;
+    protected Transform bestCoverSpot;
 
-    private BehaviorTreeNode topNode;
+    protected BehaviorTreeNode topNode;
 
-    private void Start()
+    protected void Start()
     {
         Health = maxHealth;
-        material = GetComponent<MeshRenderer>().material;
+        material = transform.GetChild(0).GetComponent<MeshRenderer>().material;
         ConstructBehaviourTree();
     }
 
-    private void Update()
+    protected void Update()
     {
         topNode.Evaluate();
         if(topNode.NodeState == NodeState.FALIERE)
         {
             SetColor(Color.red);
         }
-        Health += Time.deltaTime * healthRestoreRate;
+        //Health += Time.deltaTime * healthRestoreRate;
     }
 
-    private void OnMouseDown()
+    protected void OnMouseDown()
     {
         Health -= 3;
     }
 
-    private void ConstructBehaviourTree()
+    protected virtual void ConstructBehaviourTree()
     {
         IsCovereAvaliableNode coverAvaliableNode = new (avaliableCovers, player, this);
         GoToCoverNode goToCoverNode = new (this);
@@ -58,18 +60,30 @@ public class EnemyAI : MonoBehaviour
         IsCoveredNode isCoveredNode = new(player, transform);
         ChaseNode chaseNode = new(player, this);
         RangeNode chaseRangeNode = new(chaseRange, player, transform);
-        RangeNode attackRangeNode = new(attackRange, player, transform);
+        RangeNode attackInRangeNode = new(attackInRnage, player, transform);
+        RangeNode minInRangeNode = new RangeNode(minRange, player, transform);
+        BehaviorTreeInverter minRangeNode = new(minInRangeNode);
+        RunNode runNode = new(player, this);
         AttackNode attackNode = new(transform, this);
 
-        BehaviorTreeSequence chaseSequence = new(new List<BehaviorTreeNode> { chaseRangeNode, chaseNode });
-        BehaviorTreeSequence attackSequence = new(new List<BehaviorTreeNode> { attackRangeNode, attackNode });
+        //apart 멀어지다
+        BehaviorTreeSequence apartSequence = new(new List<BehaviorTreeNode> { minInRangeNode, runNode });
+        //Approach 다가가다
+        BehaviorTreeSelector approachSelector = new(new List<BehaviorTreeNode> { apartSequence, chaseNode });
+
+
+        BehaviorTreeSequence chaseSequence = new(new List<BehaviorTreeNode> { chaseRangeNode, approachSelector });
+
+        BehaviorTreeSequence attackOutSequence = new(new List<BehaviorTreeNode> { minRangeNode, attackNode });
+
+        BehaviorTreeSequence attackInSequence = new(new List<BehaviorTreeNode> { attackInRangeNode, attackOutSequence });
 
         BehaviorTreeSequence goToCoverSequence = new(new List<BehaviorTreeNode> { coverAvaliableNode, goToCoverNode });
         BehaviorTreeSelector findCoverSelector = new(new List<BehaviorTreeNode> { goToCoverSequence, chaseSequence });
         BehaviorTreeSelector tryToTakeCoverSelector = new(new List<BehaviorTreeNode> { isCoveredNode, findCoverSelector });
         BehaviorTreeSequence mainCoverSequence = new(new List<BehaviorTreeNode> { healthNode, tryToTakeCoverSelector });
 
-        topNode = new BehaviorTreeSelector(new List<BehaviorTreeNode> { mainCoverSequence, attackSequence, chaseSequence });
+        topNode = new BehaviorTreeSelector(new List<BehaviorTreeNode> { mainCoverSequence, attackInSequence, chaseSequence });
     }
 
     public void SetColor(Color color)
