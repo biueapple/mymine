@@ -5,8 +5,8 @@ using UnityEngine;
 //상대방과 나 사이에 무언가가 가로막고 있는가 (숨었는가)
 public class IsCoveredNode : BehaviorTreeNode
 {
-    private Transform target;
-    private Transform origin;
+    private readonly Transform target;
+    private readonly Transform origin;
 
     public IsCoveredNode(Transform target, Transform origin)
     {

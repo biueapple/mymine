@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class RangeNode : BehaviorTreeNode
 {
-    private float range;
-    private Transform target;
-    private Transform origin;
+    private readonly float range;
+    private readonly Transform target;
+    private readonly Transform origin;
 
     public RangeNode(float range, Transform target, Transform origin)
     {

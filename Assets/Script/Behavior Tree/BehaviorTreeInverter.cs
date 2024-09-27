@@ -5,7 +5,7 @@ using UnityEngine;
 //노드가 실패인지 성공인지 판단을 데코레이트 해주는 노드임 (일정 범위안에 상대가 있으면 성공이던 노드를 범위 안에 있으면 실패인 노드로 변환)
 public class BehaviorTreeInverter : BehaviorTreeNode
 {
-    protected BehaviorTreeNode node;
+    protected readonly BehaviorTreeNode node;
 
     public BehaviorTreeInverter(BehaviorTreeNode node)
     {

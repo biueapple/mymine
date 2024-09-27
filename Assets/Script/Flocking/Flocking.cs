@@ -9,6 +9,7 @@ public class Flocking : MonoBehaviour
     public float cohesionPower; 
     public float alignmentPower;
     public float avoidancePower;
+    public float cohesionRange;
     public float avoidanceRange;
     public float smoothTime = 0.5f;
     // Start is called before the first frame update
@@ -32,7 +33,7 @@ public class Flocking : MonoBehaviour
                 velocity += vector;
             }
 
-            //vector = Alignment(flock, flock[i]) * alignmentPower;
+            //vector = AlignmentT(flock, flock[i]) * alignmentPower;
             //if (vector != Vector3.zero)
             //{
             //    velocity += vector;
@@ -44,10 +45,14 @@ public class Flocking : MonoBehaviour
                 velocity += vector;
             }
 
-            velocity = Time.deltaTime * 3 * velocity;
+            velocity = Time.deltaTime * 3 * velocity.normalized;
 
-            Quaternion targetRotation = Quaternion.LookRotation(velocity);
-            flock[i].transform.rotation = targetRotation;
+            if(velocity != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(velocity);
+                flock[i].transform.rotation = targetRotation;
+            }
+            
             flock[i].Move(velocity);
         }
     }
@@ -79,7 +84,7 @@ public class Flocking : MonoBehaviour
     public Vector3 SteeredCohesion(Flock[] flocks, Flock flock)
     {
         //참고할 flocks가 없다면 아 함수는 움직임에 영향을 주지 않기 위해 zero를 리턴함
-        if (flocks.Length == 0)
+        if (flocks.Length == 0 || Vector3.SqrMagnitude(flock.transform.position - flocks[0].transform.position) < cohesionRange * cohesionRange)
             return Vector3.zero;
 
         Vector3 vector = Vector3.zero;
@@ -104,7 +109,7 @@ public class Flocking : MonoBehaviour
     //flocks들의 평균적으로 향하고 있는 방향
     public Vector3 Alignment(Flock[] flocks, Flock flock)
     {
-        //참고할 flocks가 없다면 움직임에 영향을 주지 않기 위해 바라보던 방향을 그대로 리턴함
+        //참고할 flocks가 없다면 움직임에 영향을 주지 않기 위해
         if (flocks.Length == 0)
             return Vector3.zero;
 
@@ -122,6 +127,17 @@ public class Flocking : MonoBehaviour
 
         //방향이기에 이미 로컬기준이라 값 변경 불필요
         return velocity.normalized;
+    }
+
+    //flocks들의 평균적으로 향하고 있는 방향
+    public Vector3 AlignmentT(Flock[] flocks, Flock flock)
+    {
+        //참고할 flocks가 없다면 움직임에 영향을 주지 않기 위해
+        if (flocks.Length == 0)
+            return Vector3.zero;
+
+        //방향이기에 이미 로컬기준이라 값 변경 불필요
+        return flocks[0].transform.forward;
     }
 
     //너무 가까운 flocks들에게서 반대방향의 평균

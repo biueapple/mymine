@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class HealthNode : BehaviorTreeNode
 {
-    private EnemyAI ai;
-    private float threshold;
+    private readonly EnemyAI ai;
+    private readonly float threshold;
 
     public HealthNode(EnemyAI ai, float threshold)
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 //원래는 이동을 위한 네비게이션을 사용하지만 이미 만든게 있으니 나중에 그걸로 수정
 public class GoToCoverNode : BehaviorTreeNode
 {
-    private EnemyAI ai;
+    private readonly EnemyAI ai;
 
     public GoToCoverNode(EnemyAI origin)
     {

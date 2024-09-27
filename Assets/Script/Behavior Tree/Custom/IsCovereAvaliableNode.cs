@@ -6,9 +6,9 @@ using UnityEngine;
 public class IsCovereAvaliableNode : BehaviorTreeNode
 {
     //벽을 의미
-    private Cover[] avaliableCovers;
-    private Transform target;
-    private EnemyAI ai;
+    private readonly Cover[] avaliableCovers;
+    private readonly Transform target;
+    private readonly EnemyAI ai;
 
     public IsCovereAvaliableNode(Cover[] covers, Transform target, EnemyAI ai)
     {
@@ -68,9 +68,8 @@ public class IsCovereAvaliableNode : BehaviorTreeNode
 
     private bool CheckIfSpotIsValid(Transform spot)
     {
-        RaycastHit hit;
         Vector3 direction = target.position - spot.position;
-        if(Physics.Raycast(spot.position, direction, out hit))
+        if(Physics.Raycast(spot.position, direction, out RaycastHit hit))
         {
             if(hit.collider.transform != target)
             {
