@@ -398,9 +398,9 @@ MonoBehaviour:
   - {fileID: 592725606}
   - {fileID: 534492853}
   - {fileID: 927882870}
-  - {fileID: 1975576955}
-  boss: {fileID: 1975576955}
-  rotationSpeed: 0
+  - {fileID: 1975576957}
+  boss: {fileID: 1975576957}
+  rotationSpeed: 90
 --- !u!4 &87239503
 Transform:
   m_ObjectHideFlags: 0
@@ -1814,9 +1814,9 @@ MonoBehaviour:
   - {fileID: 87239502}
   - {fileID: 592725606}
   - {fileID: 927882870}
-  - {fileID: 1975576955}
-  boss: {fileID: 1975576955}
-  rotationSpeed: 60
+  - {fileID: 1975576957}
+  boss: {fileID: 1975576957}
+  rotationSpeed: 90
 --- !u!4 &534492854
 Transform:
   m_ObjectHideFlags: 0
@@ -2110,9 +2110,9 @@ MonoBehaviour:
   - {fileID: 87239502}
   - {fileID: 534492853}
   - {fileID: 927882870}
-  - {fileID: 1975576955}
-  boss: {fileID: 1975576955}
-  rotationSpeed: 60
+  - {fileID: 1975576957}
+  boss: {fileID: 1975576957}
+  rotationSpeed: 90
 --- !u!4 &592725607
 Transform:
   m_ObjectHideFlags: 0
@@ -2714,9 +2714,9 @@ MonoBehaviour:
   - {fileID: 87239502}
   - {fileID: 592725606}
   - {fileID: 534492853}
-  - {fileID: 1975576955}
-  boss: {fileID: 1975576955}
-  rotationSpeed: 60
+  - {fileID: 1975576957}
+  boss: {fileID: 1975576957}
+  rotationSpeed: 90
 --- !u!4 &927882871
 Transform:
   m_ObjectHideFlags: 0
@@ -4239,7 +4239,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1975576956}
-  - component: {fileID: 1975576955}
+  - component: {fileID: 1975576957}
   - component: {fileID: 1975576954}
   m_Layer: 0
   m_Name: B
@@ -4271,35 +4271,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &1975576955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975576953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 572960d6125980640bb4d9d824108d66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 10
-  health: 0
-  healthRestoreRate: 1
-  chaseRange: 20
-  minRange: 5
-  attackInRnage: 10
-  player: {fileID: 1537775065}
-  avaliableCovers:
-  - {fileID: 93464541}
-  - {fileID: 87239501}
-  colleague:
-  - {fileID: 87239502}
-  - {fileID: 592725606}
-  - {fileID: 534492853}
-  - {fileID: 927882870}
-  boss: {fileID: 1975576955}
-  rotationSpeed: 30
 --- !u!4 &1975576956
 Transform:
   m_ObjectHideFlags: 0
@@ -4318,6 +4289,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1975576957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975576953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ecef28f62f7dd646aec6a0e4c0730c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  health: 0
+  healthRestoreRate: 1
+  chaseRange: 20
+  minRange: 5
+  attackInRnage: 10
+  player: {fileID: 1537775065}
+  avaliableCovers:
+  - {fileID: 93464541}
+  - {fileID: 87239501}
+  colleague:
+  - {fileID: 87239502}
+  - {fileID: 592725606}
+  - {fileID: 534492853}
+  - {fileID: 927882870}
+  boss: {fileID: 1975576957}
+  rotationSpeed: 90
 --- !u!1 &2046294524
 GameObject:
   m_ObjectHideFlags: 0

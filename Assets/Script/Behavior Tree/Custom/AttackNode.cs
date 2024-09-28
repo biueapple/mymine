@@ -14,6 +14,7 @@ public class AttackNode : BehaviorTreeNode
         this.ai = ai;
     }
 
+    //상대를 바라보도록 변경 필요
     public override NodeState Evaluate()
     {
         ai.SetColor(Color.green);

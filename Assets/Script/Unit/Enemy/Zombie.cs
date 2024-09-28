@@ -19,20 +19,17 @@ public class Zombie : Enemy
         attackModule.MotionAdd(new ZombieAttack(this));
 
         animator = GetComponent<Animator>();
-
-        ChangeState(new EnemyPatrolState(this));
     }
 
     // Update is called once per frame
     void Update()
     {
-        state.Update();
+
     }
 
 
     protected override void Dead()
     {
-        state.Exit();
         gameObject.SetActive(false);
     }
 

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //원래는 이동을 위한 네비게이션을 사용하지만 이미 만든게 있으니 나중에 그걸로 수정
-public class ChaseNode : BehaviorTreeNode
+public class ChaseNode : MoveNode
 {
     private readonly Transform target;
     private readonly EnemyAI ai;
 
-    public ChaseNode(Transform target, EnemyAI origin)
+    public ChaseNode(Transform target, Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum)
     {
         this.target = target;
-        ai = origin;
+        ai = flock;
     }
 
     public override NodeState Evaluate()
@@ -21,12 +21,9 @@ public class ChaseNode : BehaviorTreeNode
         if(distance > 0.2f)
         {
             Vector3 direction = target.position - ai.transform.position;
-            direction.y = 0; // Y축 회전을 제거
 
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            ai.transform.rotation = targetRotation;
-            //움직이게
-            ai.transform.Translate((target.position - ai.transform.position).normalized * Time.deltaTime, Space.World);
+            Move(direction);
+
             return NodeState.RUNNING;
         }
         else

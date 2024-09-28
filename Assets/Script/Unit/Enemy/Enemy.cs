@@ -12,9 +12,6 @@ public abstract class Enemy : Unit
     [Range(1, 3)]
     protected int amount;
 
-    protected EnemyState state;
-    public EnemyState State { get { return state; } }
-
     protected AttackModule attackModule;
     public AttackModule AttackModule { get { return attackModule; } }
 
@@ -31,6 +28,26 @@ public abstract class Enemy : Unit
 
     public abstract Transform Head { get; }
     public abstract Transform Body { get; }
+
+    [SerializeField]
+    protected float chaseRange;
+    [SerializeField]
+    protected float minRange;
+    [SerializeField]
+    protected float attackInRnage;
+
+    [SerializeField]
+    protected Cover[] avaliableCovers;
+
+    protected Transform bestCoverSpot;
+
+    protected BehaviorTreeNode topNode;
+
+    //자신의 동료와 리더를 참조
+    [SerializeField]
+    protected Enemy[] colleague;
+    [SerializeField]
+    protected Enemy boss;
 
     protected void Start()
     {
@@ -49,15 +66,6 @@ public abstract class Enemy : Unit
         pathfinder = new Pathfinder(this);
 
         attackModule = new AttackModule(1, STAT);
-    }
-
-    public void ChangeState(EnemyState _state)
-    {
-        state?.Exit();
-
-        state = _state;
-
-        state?.Enter();
     }
 
     public override float Hit(AttackInformation attackInformation)
