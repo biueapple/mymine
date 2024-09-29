@@ -400,6 +400,7 @@ MonoBehaviour:
   - {fileID: 927882870}
   - {fileID: 1975576957}
   boss: {fileID: 1975576957}
+  power: 1
   rotationSpeed: 90
 --- !u!4 &87239503
 Transform:
@@ -1816,6 +1817,7 @@ MonoBehaviour:
   - {fileID: 927882870}
   - {fileID: 1975576957}
   boss: {fileID: 1975576957}
+  power: 1
   rotationSpeed: 90
 --- !u!4 &534492854
 Transform:
@@ -2112,6 +2114,7 @@ MonoBehaviour:
   - {fileID: 927882870}
   - {fileID: 1975576957}
   boss: {fileID: 1975576957}
+  power: 1
   rotationSpeed: 90
 --- !u!4 &592725607
 Transform:
@@ -2716,6 +2719,7 @@ MonoBehaviour:
   - {fileID: 534492853}
   - {fileID: 1975576957}
   boss: {fileID: 1975576957}
+  power: 1
   rotationSpeed: 90
 --- !u!4 &927882871
 Transform:
@@ -4317,6 +4321,7 @@ MonoBehaviour:
   - {fileID: 534492853}
   - {fileID: 927882870}
   boss: {fileID: 1975576957}
+  power: 0
   rotationSpeed: 90
 --- !u!1 &2046294524
 GameObject:

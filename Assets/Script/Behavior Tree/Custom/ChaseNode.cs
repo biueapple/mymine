@@ -8,7 +8,7 @@ public class ChaseNode : MoveNode
     private readonly Transform target;
     private readonly EnemyAI ai;
 
-    public ChaseNode(Transform target, Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum)
+    public ChaseNode(Transform target, Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum, float power) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum, power)
     {
         this.target = target;
         ai = flock;

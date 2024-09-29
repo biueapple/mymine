@@ -7,7 +7,7 @@ public class GoToCoverNode : MoveNode
 {
     private readonly EnemyAI ai;
 
-    public GoToCoverNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum)
+    public GoToCoverNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum, float power) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum, power)
     {
         ai = flock;
     }

@@ -7,7 +7,7 @@ public class FlockNode : MoveNode
 {
     //보스와 가까워져야 하는 거리
     private readonly float cohesion;
-    public FlockNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float cohesion, float rotationSpeed, float momentum) : base (colleague, flock, boss, avoidance, rotationSpeed, momentum)
+    public FlockNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float cohesion, float rotationSpeed, float momentum, float power) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum, power)
     {
         this.cohesion = cohesion;
     }

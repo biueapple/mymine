@@ -39,6 +39,8 @@ public class EnemyAI : MonoBehaviour
     protected EnemyAI[] colleague;
     [SerializeField]
     protected EnemyAI boss;
+    [SerializeField]
+    protected float power;
 
     public float rotationSpeed;
     protected void Start()
@@ -68,18 +70,18 @@ public class EnemyAI : MonoBehaviour
         //숨을 수 있는 곳 중에서 가장 좋은 자리를 찾는 노드
         IsCovereAvaliableNode coverAvaliableNode = new (avaliableCovers, player, this);
         //숨을곳으로 이동하는 노드
-        GoToCoverNode goToCoverNode = new (colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f);
+        GoToCoverNode goToCoverNode = new (colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f, power);
         //체력 상황을 체크하는 노드
         HealthNode healthNode = new(this, 5);
         //현재 숨어있는지 확인하는 노드
         IsCoveredNode isCoveredNode = new(player, transform);
         //플레이어를 쫓아가는 노드
-        ChaseNode chaseNode = new(player, colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f);
+        ChaseNode chaseNode = new(player, colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f, power);
 
         //플레이어가 쫓는 범위 안에 있는지 확인하는 노드
         RangeNode chaseRangeNode = new(chaseRange, player, transform);
         //목표가 없을 때 서로 겹치지 않게 보스 근처로 이동하는 노드
-        FlockNode flockNode = new(colleague.Select(c => c.transform).ToArray(), this, boss.transform, 2, 3, rotationSpeed, 0.5f);
+        FlockNode flockNode = new(colleague.Select(c => c.transform).ToArray(), this, boss.transform, 2, 3, rotationSpeed, 0.5f, power);
 
         //공격 거리를 체크하는 노드
         RangeNode attackInRangeNode = new(attackInRnage, player, transform);
@@ -87,9 +89,9 @@ public class EnemyAI : MonoBehaviour
         RangeNode minInRangeNode = new (minRange, player, transform);
 
         //도망가는 노드
-        RunNode runNode = new(player, colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f);
+        RunNode runNode = new(player, colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f, power);
         //공격하는 노드
-        AttackNode attackNode = new(transform, this);
+        AttackNode attackNode = new(colleague.Select(c => c.transform).ToArray(), this, boss.transform, 3, rotationSpeed, 0.5f, power);
 
         //apart 멀어지다 너무 가깝다면 도망가도록 하는 시퀸스
         BehaviorTreeSequence apartSequence = new(new List<BehaviorTreeNode> { minInRangeNode, runNode });

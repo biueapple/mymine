@@ -20,7 +20,9 @@ public abstract class MoveNode : BehaviorTreeNode
     protected Vector3 desiredVelocity;
     protected readonly float momentum;
 
-    public MoveNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum)
+    protected readonly float power;
+
+    public MoveNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum, float power)
     {
         this.colleague = colleague;
         this.flock = flock;
@@ -28,6 +30,7 @@ public abstract class MoveNode : BehaviorTreeNode
         this.avoidance = avoidance;
         this.rotationSpeed = rotationSpeed;
         this.momentum = momentum;
+        this.power = power;
     }
 
     //최우선은 일단 동료와 겹치지 않는가
@@ -59,22 +62,22 @@ public abstract class MoveNode : BehaviorTreeNode
     protected void Move(Vector3 velocity)
     {
         //인자로 전달받은 velocity가 얼마의 비율로 힘이 들어갈지
-        float mg = 1;
+        float mg = 1 ;
         Vector3 avoid = Avoidance(ref mg);
-        velocity *= mg;
-        if(avoid == Vector3.zero)
-        {
-            velocity += avoid;
-        }
-        else
-        {
-            velocity = avoid;
-        }
+        velocity = velocity.normalized * mg;
+        //if(avoid == Vector3.zero)
+        //{
+            velocity += avoid * power;
+        //}
+        //else
+        //{
+        //    velocity = avoid;
+        //}
 
         velocity.y = 0; // Y축 회전을 제거
         if (velocity != Vector3.zero)
         {
-            velocity = Vector3.Lerp(desiredVelocity, velocity, momentum * Time.deltaTime);
+            //velocity = Vector3.Lerp(desiredVelocity, velocity, momentum * Time.deltaTime);
 
             //Quaternion targetRotation = Quaternion.LookRotation(velocity);
             //flock.transform.rotation = targetRotation;
@@ -85,6 +88,6 @@ public abstract class MoveNode : BehaviorTreeNode
             //움직이게
             flock.transform.Translate(velocity.normalized * Time.deltaTime, Space.World);
         }
-        desiredVelocity = velocity;
+        //desiredVelocity = velocity;
     }
 }
