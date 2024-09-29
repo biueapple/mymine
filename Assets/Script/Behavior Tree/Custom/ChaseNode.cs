@@ -6,9 +6,9 @@ using UnityEngine;
 public class ChaseNode : MoveNode
 {
     private readonly Transform target;
-    private readonly EnemyAI ai;
+    private readonly Enemy ai;
 
-    public ChaseNode(Transform target, Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum, float power) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum, power)
+    public ChaseNode(Transform target, Transform[] colleague, Enemy flock, float avoidance, float rotationSpeed, float momentum, float power) : base(colleague, flock, avoidance, rotationSpeed, momentum, power)
     {
         this.target = target;
         ai = flock;
@@ -16,7 +16,7 @@ public class ChaseNode : MoveNode
 
     public override NodeState Evaluate()
     {
-        ai.SetColor(Color.yellow);
+        //ai.SetColor(Color.yellow);
         float distance = Vector3.Distance(target.position, ai.transform.position);
         if(distance > 0.2f)
         {

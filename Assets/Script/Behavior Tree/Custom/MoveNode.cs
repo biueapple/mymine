@@ -8,9 +8,7 @@ public abstract class MoveNode : BehaviorTreeNode
     //동료들
     protected readonly Transform[] colleague;
     //자신
-    protected readonly EnemyAI flock;
-    //보스
-    protected readonly Transform boss;
+    protected readonly Enemy flock;
 
     //가까워 지면 안되는 거리
     protected readonly float avoidance;
@@ -22,11 +20,10 @@ public abstract class MoveNode : BehaviorTreeNode
 
     protected readonly float power;
 
-    public MoveNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float rotationSpeed, float momentum, float power)
+    public MoveNode(Transform[] colleague, Enemy flock, float avoidance, float rotationSpeed, float momentum, float power)
     {
         this.colleague = colleague;
         this.flock = flock;
-        this.boss = boss;
         this.avoidance = avoidance;
         this.rotationSpeed = rotationSpeed;
         this.momentum = momentum;
@@ -91,3 +88,29 @@ public abstract class MoveNode : BehaviorTreeNode
         //desiredVelocity = velocity;
     }
 }
+
+/*플레이어를 찾아가는 방법, 몸이 가는 방향을 바라보는 기능은 AutoMove에 있음
+                enemy.Pathfinder.Finding(target.transform.position);
+                enemy.AutoMove.SetTartget(enemy.Pathfinder.Points);
+
+머리만 플레이어를 바라보도록, 몸은 가는 방향을 바라봐야 하니까
+Vector3 directionToTarget;
+    void LookAtTargetWithinAngle()
+    {
+        // 캐릭터와 타겟 간의 방향을 계산
+        directionToTarget = target.transform.position - enemy.Head.position;
+        directionToTarget.y = 0; // 수평 방향만 고려 (y 축 제외)
+
+        // 두 벡터(캐릭터 forward 방향과 타겟 방향) 사이의 각도 계산
+        float angleToTarget = Vector3.Angle(enemy.transform.forward, directionToTarget);
+
+        // 각도가 지정된 시야 각도(viewAngle) 내에 있으면 타겟을 바라봄
+        if (angleToTarget <= 45)
+        {
+            // 타겟을 바라보도록 머리 회전
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            //enemy.Head.rotation = Quaternion.Slerp(enemy.Head.rotation, targetRotation, Time.deltaTime * 5f); // 부드럽게 회전
+            enemy.Head.rotation = targetRotation;
+        }
+    }
+ */

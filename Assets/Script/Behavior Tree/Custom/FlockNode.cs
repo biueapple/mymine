@@ -7,9 +7,11 @@ public class FlockNode : MoveNode
 {
     //보스와 가까워져야 하는 거리
     private readonly float cohesion;
-    public FlockNode(Transform[] colleague, EnemyAI flock, Transform boss, float avoidance, float cohesion, float rotationSpeed, float momentum, float power) : base(colleague, flock, boss, avoidance, rotationSpeed, momentum, power)
+    private readonly Transform boss;
+    public FlockNode(Transform[] colleague, Enemy flock, Transform boss, float avoidance, float cohesion, float rotationSpeed, float momentum, float power) : base(colleague, flock, avoidance, rotationSpeed, momentum, power)
     {
         this.cohesion = cohesion;
+        this.boss = boss;
     }
 
     //Flock알고리즘을 참고해서 포지션을 정하기 다만 자신과 주위만 영향을 끼쳐야 하며 전체적으로 영향을 줘선 안됨
@@ -34,7 +36,7 @@ public class FlockNode : MoveNode
     //일단 할일이 없어서 오는 노드이기에 항상 작동중
     public override NodeState Evaluate()
     {
-        flock.SetColor(Color.cyan);
+        //flock.SetColor(Color.cyan);
 
         Vector3 velocity = Vector3.zero;
         

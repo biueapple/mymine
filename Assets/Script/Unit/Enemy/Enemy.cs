@@ -74,7 +74,11 @@ public abstract class Enemy : Unit
         if(stat.HP <= 0)
         {
             //아이템 드랍
-            FlowManager.Instance.DropItem(transform.position, itemID[Random.Range(0, itemID.Length)], Random.Range(0, amount + 1), Vector3.up * 2);
+            if(itemID.Length > 0)
+            {
+                FlowManager.Instance.DropItem(transform.position, itemID[Random.Range(0, itemID.Length)], Random.Range(0, amount + 1), Vector3.up * 2);
+            }
+            
             //비활성화
             Dead();
         }
@@ -83,4 +87,14 @@ public abstract class Enemy : Unit
     }
 
     protected abstract void Dead();
+
+    public void SetBestCoverSpot(Transform transform)
+    {
+        this.bestCoverSpot = transform;
+    }
+
+    public Transform GetBestCoverSpot()
+    {
+        return bestCoverSpot;
+    }
 }

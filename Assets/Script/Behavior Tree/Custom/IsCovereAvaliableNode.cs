@@ -8,9 +8,9 @@ public class IsCovereAvaliableNode : BehaviorTreeNode
     //벽을 의미
     private readonly Cover[] avaliableCovers;
     private readonly Transform target;
-    private readonly EnemyAI ai;
+    private readonly Enemy ai;
 
-    public IsCovereAvaliableNode(Cover[] covers, Transform target, EnemyAI ai)
+    public IsCovereAvaliableNode(Cover[] covers, Transform target, Enemy ai)
     {
         avaliableCovers = covers;
         this.target = target;
