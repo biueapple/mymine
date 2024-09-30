@@ -49,6 +49,11 @@ public abstract class Enemy : Unit
     [SerializeField]
     protected Enemy boss;
 
+    [SerializeField]
+    protected float power;
+    [SerializeField]
+    protected float rotationSpeed;
+
     protected void Start()
     {
         autoMove = new(this, substances[0].transform);
@@ -96,5 +101,13 @@ public abstract class Enemy : Unit
     public Transform GetBestCoverSpot()
     {
         return bestCoverSpot;
+    }
+
+    public void SetColor(Color color)
+    {
+        for(int i = 0; i < substances.Length; i++)
+        {
+            substances[i].GetComponent<MeshRenderer>().material.color = color;
+        }
     }
 }

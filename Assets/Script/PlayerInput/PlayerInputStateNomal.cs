@@ -4,14 +4,8 @@ using UnityEngine;
 
 public class PlayerInputStateNomal : IPlayerInputSystem
 {
-    public IPlayerInputSystem Mode { get => this; 
-        //set
-        //{
-        //    broken = 1;
-        //    brokenPre.SetActive(false);
-        //    player.PlayerInput = value;
-        //} 
-    }
+    public IPlayerInputSystem Mode { get => this; }
+
     private readonly Player player;
     private World.BlockLaycast blockLaycast;
     //인벤토리 가지고 있어야 함
@@ -61,6 +55,7 @@ public class PlayerInputStateNomal : IPlayerInputSystem
     }
     public void RightDown()
     {
+        //ui가 켜져있다면 입력을 받으면 안됨
         if(UIManager.Instance.ActiveUI.Count == 0)
         {
             World.BlockLaycast laycast = World.Instance.WorldRaycast(player.Camera.transform.position, player.Camera.transform.forward, 8);

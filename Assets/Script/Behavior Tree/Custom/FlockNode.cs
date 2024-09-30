@@ -36,7 +36,7 @@ public class FlockNode : MoveNode
     //일단 할일이 없어서 오는 노드이기에 항상 작동중
     public override NodeState Evaluate()
     {
-        //flock.SetColor(Color.cyan);
+        flock.SetColor(Color.cyan);
 
         Vector3 velocity = Vector3.zero;
         

@@ -18,7 +18,7 @@ public class GoToCoverNode : MoveNode
         if (coverSpot == null)
             return NodeState.FALIERE;
 
-        //ai.SetColor(Color.blue);
+        ai.SetColor(Color.blue);
         float distance = Vector3.Distance(coverSpot.position, ai.transform.position);
         if(distance > 0.2f)
         {

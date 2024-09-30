@@ -343,6 +343,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8915362055868351591}
   - component: {fileID: 8846537100512286569}
+  - component: {fileID: 4058049935688402739}
+  - component: {fileID: 8626140120532541670}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Untagged
@@ -391,14 +393,92 @@ MonoBehaviour:
   amount: 0
   autoMove:
     points: []
-  chaseRange: 0
-  minRange: 0
-  attackInRnage: 0
+  chaseRange: 20
+  minRange: 5
+  attackInRnage: 10
   avaliableCovers: []
-  colleague: []
+  colleague:
+  - {fileID: 0}
+  - {fileID: 0}
   boss: {fileID: 0}
-  power: 0
-  rotationSpeed: 0
+  power: 1
+  rotationSpeed: 90
+--- !u!114 &4058049935688402739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890378698733441554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f605857c93856c045b361f04e8ec624f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 0
+  mp: 0
+  barrier: 0
+  original:
+    hp: 20
+    mp: 0
+    barrier: 0
+    naturalHP: 0
+    naturalMP: 0
+    naturalBarrier: 0
+    defence: 0
+    resistance: 0
+    ad: 3
+    ap: 0
+    attackSpeed: 1
+    criticalChance: 0
+    criticalMultiplier: 0
+    criticalDefence: 0
+    defencePenetration: 0
+    defencePenetrationPer: 0
+    resistancePenetration: 0
+    resistancePenetrationPer: 0
+    speed: 1
+  elevated:
+    hp: 0
+    mp: 0
+    barrier: 0
+    naturalHP: 0
+    naturalMP: 0
+    naturalBarrier: 0
+    defence: 0
+    resistance: 0
+    ad: 0
+    ap: 0
+    attackSpeed: 0
+    criticalChance: 0
+    criticalMultiplier: 0
+    criticalDefence: 0
+    defencePenetration: 0
+    defencePenetrationPer: 0
+    resistancePenetration: 0
+    resistancePenetrationPer: 0
+    speed: 0
+  team: 0
+  dotTime: 2
+  naturalTime: 2
+--- !u!114 &8626140120532541670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890378698733441554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bee39db6b44501c43b1dd581e26a5d52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weight: 3
+  _velocity: {x: 0, y: 0, z: 0}
+  _velocityMomemtum: {x: 0, y: 0, z: 0}
+  _machine:
+    isGround: 1
+    isAir: 0
 --- !u!1 &1971532311261697037
 GameObject:
   m_ObjectHideFlags: 0

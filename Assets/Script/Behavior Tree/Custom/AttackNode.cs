@@ -5,19 +5,26 @@ using UnityEngine;
 //원래는 네비게이션을 사용하지만 다른게 있으니 나중에 그걸로 수정
 public class AttackNode : MoveNode
 {
-    private Enemy ai;
+    private readonly Enemy ai;
+    private readonly Player target;
 
-    public AttackNode(Transform[] colleague, Enemy flock, float avoidance, float rotationSpeed, float momentum, float power) : base(colleague, flock, avoidance, rotationSpeed, momentum, power)
+    public AttackNode(Enemy flock, Player target, float rotationSpeed) : base(null, flock, 0, rotationSpeed, 0 , 0)
     {
         ai = flock;
+        this.target = target;
     }
 
     //상대를 바라보도록 변경 필요
     public override NodeState Evaluate()
     {
-        //ai.SetColor(Color.green);
+        ai.SetColor(Color.green);
 
-        Move(Vector3.zero);
+        //상대를 바라보는 함수 전체가
+        LookAtTarget(target);
+        //상대를 바라보는 함수 머리만
+        LookAtTargetWithinAngle(target);
+        //공격
+        ai.AttackModule.Attack();
 
         return NodeState.RUNNING;
     }

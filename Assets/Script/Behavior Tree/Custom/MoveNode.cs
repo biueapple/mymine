@@ -16,6 +16,7 @@ public abstract class MoveNode : BehaviorTreeNode
     protected readonly float rotationSpeed;
 
     protected Vector3 desiredVelocity;
+    //현재 사용중이지 않은 변수
     protected readonly float momentum;
 
     protected readonly float power;
@@ -34,7 +35,7 @@ public abstract class MoveNode : BehaviorTreeNode
     protected Vector3 Avoidance(ref float magnitude)
     {
         //참고할 동료가 없다면 움직임에 영향을 주지 않기 위해 zero 리턴
-        if (colleague.Length == 0)
+        if (colleague == null || colleague.Length == 0)
             return Vector3.zero;
 
         Vector3 velocity = Vector3.zero;
@@ -56,7 +57,7 @@ public abstract class MoveNode : BehaviorTreeNode
     }
 
     //움직일 방향을 입력
-    protected void Move(Vector3 velocity)
+    protected void Move(Vector3 velocity, Player target = null)
     {
         //인자로 전달받은 velocity가 얼마의 비율로 힘이 들어갈지
         float mg = 1 ;
@@ -79,13 +80,58 @@ public abstract class MoveNode : BehaviorTreeNode
             //Quaternion targetRotation = Quaternion.LookRotation(velocity);
             //flock.transform.rotation = targetRotation;
 
-            Quaternion targetRotation = Quaternion.LookRotation(velocity);
-            flock.transform.rotation = Quaternion.RotateTowards(flock.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //Quaternion targetRotation = Quaternion.LookRotation(velocity);
+            //flock.transform.rotation = Quaternion.RotateTowards(flock.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            LookAtVelocity(velocity);
+            LookAtTargetWithinAngle(target);
 
             //움직이게
             flock.transform.Translate(velocity.normalized * Time.deltaTime, Space.World);
         }
         //desiredVelocity = velocity;
+    }
+
+    protected void LookAtVelocity(Vector3 velocity)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(velocity);
+        flock.transform.rotation = Quaternion.RotateTowards(flock.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    protected void LookAtTarget(Player target)
+    {
+        if (flock == null || target == null)
+            return;
+
+        // 캐릭터와 타겟 간의 방향을 계산
+        Vector3 directionToTarget = target.transform.position + new Vector3(0, target.Height, 0) - flock.transform.position;
+        directionToTarget.y = 0; // 수평 방향만 고려 (y 축 제외)
+
+        // 타겟을 바라보도록 회전
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        flock.transform.rotation = Quaternion.RotateTowards(flock.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    //머리만 플레이어를 바라보도록, 몸은 가는 방향을 바라봐야 하니까
+    protected void LookAtTargetWithinAngle(Player target)
+    {
+        if (flock.Head == null || target == null)
+            return;
+
+        // 캐릭터와 타겟 간의 방향을 계산
+        Vector3 directionToTarget = target.transform.position + new Vector3(0, target.Height, 0) - flock.Head.position;
+        //directionToTarget.y = 0; // 수평 방향만 고려 (y 축 제외)
+
+        // 두 벡터(캐릭터 forward 방향과 타겟 방향) 사이의 각도 계산
+        float angleToTarget = Vector3.Angle(flock.transform.forward, directionToTarget);
+
+        // 각도가 지정된 시야 각도(viewAngle) 내에 있으면 타겟을 바라봄
+        if (angleToTarget <= 45)
+        {
+            // 타겟을 바라보도록 머리 회전
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+            //enemy.Head.rotation = Quaternion.Slerp(enemy.Head.rotation, targetRotation, Time.deltaTime * 5f); // 부드럽게 회전
+            flock.Head.rotation = targetRotation;
+        }
     }
 }
 

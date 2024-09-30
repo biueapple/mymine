@@ -12,7 +12,7 @@ public class AttackModule
     public IAttackMotion Motion { get { return motions[index]; } }
     private int index = 0;
     public int Index { get { return index; } }
-    private Coroutine timelimitCoroutine = null;
+    //private Coroutine timelimitCoroutine = null;
     private Coroutine delayCoroutine = null;
 
     public AttackModule(int count, Stat stat)
@@ -73,11 +73,11 @@ public class AttackModule
         return null;
     }
 
-    //공격 인덱스 초기화
-    private void Initialization()
-    {
-        index = 0;
-    }
+    ////공격 인덱스 초기화
+    //private void Initialization()
+    //{
+    //    index = 0;
+    //}
 
     //공격 후 기달려야하는 시간
     private IEnumerator DelayCalculate(float delay)
@@ -91,16 +91,16 @@ public class AttackModule
         delayCoroutine = null;
     }
 
-    //공격 전 기달려야 하는 시간
-    private IEnumerator TimelimitCalculate(float limit)
-    {
-        //일정시간 후에 공격 인덱스를 초기화
-        yield return new WaitForSeconds(limit);
-        //공격 인덱스 초기화
-        Initialization();
-        //현재 실행중인 코루틴은 없음
-        timelimitCoroutine = null;
-        //공격 가능 표시
-        delayCoroutine = null;
-    }
+    ////공격 전 기달려야 하는 시간
+    //private IEnumerator TimelimitCalculate(float limit)
+    //{
+    //    //일정시간 후에 공격 인덱스를 초기화
+    //    yield return new WaitForSeconds(limit);
+    //    //공격 인덱스 초기화
+    //    Initialization();
+    //    //현재 실행중인 코루틴은 없음
+    //    timelimitCoroutine = null;
+    //    //공격 가능 표시
+    //    delayCoroutine = null;
+    //}
 }
