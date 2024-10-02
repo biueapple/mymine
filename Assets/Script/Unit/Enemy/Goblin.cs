@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Goblin : Enemy
+public class Goblin : Enemy , ICoveredEnemy, IFlockingEnemy
 {
     private readonly Animator animator;
     public Animator Animator { get { return animator; } }
@@ -12,26 +12,47 @@ public class Goblin : Enemy
 
     public override Transform Body => substances[0].transform;
 
+    [SerializeField]
+    protected Cover[] avaliableCovers;
+
+    protected Transform bestCoverSpot;
+    public Transform BestCoverSpot { get { return bestCoverSpot; } set { bestCoverSpot = value; } }
+
+
+
+    //자신의 동료와 리더를 참조
+    [SerializeField]
+    protected Enemy[] colleague;
+    public Enemy[] Colleague => colleague;
+    [SerializeField]
+    protected Enemy boss;
+    public Enemy Boss => boss;
+
+    [SerializeField]
+    protected float power;
+
     // Start is called before the first frame update
     new void Start()
     {
         base.Start();
 
+        FlockingMoveNode flockingMoveNode = new FlockingMoveNode(colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+
         //숨을 수 있는 곳 중에서 가장 좋은 자리를 찾는 노드
         IsCovereAvaliableNode coverAvaliableNode = new(avaliableCovers, GameManager.Instance.Players[0].transform, this);
         //숨을곳으로 이동하는 노드
-        GoToCoverNode goToCoverNode = new(colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+        GoToCoverNode goToCoverNode = new(this, flockingMoveNode);
         //체력 상황을 체크하는 노드
         HealthNode healthNode = new(this, 5);
         //현재 숨어있는지 확인하는 노드
         IsCoveredNode isCoveredNode = new(GameManager.Instance.Players[0].transform, transform);
         //플레이어를 쫓아가는 노드
-        ChaseNode chaseNode = new(GameManager.Instance.Players[0], colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+        ChaseNode chaseNode = new(GameManager.Instance.Players[0], this, flockingMoveNode);
 
         //플레이어가 쫓는 범위 안에 있는지 확인하는 노드
         RangeNode chaseRangeNode = new(chaseRange, GameManager.Instance.Players[0].transform, transform);
         //목표가 없을 때 서로 겹치지 않게 보스 근처로 이동하는 노드
-        FlockNode flockNode = new(colleague.Select(c => c.transform).ToArray(), this, boss != null ? boss.transform : null, 2, 3, rotationSpeed, 0.5f, power);
+        FlockNode flockNode = new(boss != null ? boss.transform : null, 3, flockingMoveNode, this);
 
         //공격 거리를 체크하는 노드
         RangeNode attackInRangeNode = new(attackInRnage, GameManager.Instance.Players[0].transform, transform);
@@ -39,9 +60,9 @@ public class Goblin : Enemy
         RangeNode minInRangeNode = new(minRange, GameManager.Instance.Players[0].transform, transform);
 
         //도망가는 노드
-        RunNode runNode = new(GameManager.Instance.Players[0].transform, colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+        RunNode runNode = new(GameManager.Instance.Players[0].transform, this, flockingMoveNode);
         //공격하는 노드
-        AttackNode attackNode = new(this, GameManager.Instance.Players[0], rotationSpeed);
+        AttackNode attackNode = new(this, GameManager.Instance.Players[0], flockingMoveNode);
 
         //apart 멀어지다 너무 가깝다면 도망가도록 하는 시퀸스
         BehaviorTreeSequence apartSequence = new(new List<BehaviorTreeNode> { minInRangeNode, runNode });

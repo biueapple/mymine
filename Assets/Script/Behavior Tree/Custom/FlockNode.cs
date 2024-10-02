@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
-public class FlockNode : MoveNode
+public class FlockNode : BehaviorTreeNode
 {
     //보스와 가까워져야 하는 거리
     private readonly float cohesion;
     private readonly Transform boss;
-    public FlockNode(Transform[] colleague, Enemy flock, Transform boss, float avoidance, float cohesion, float rotationSpeed, float momentum, float power) : base(colleague, flock, avoidance, rotationSpeed, momentum, power)
+    private readonly Enemy ai;
+    private readonly MoveNode moveNode;
+    public FlockNode(Transform boss, float cohesion, MoveNode moveNode, Enemy ai)
     {
         this.cohesion = cohesion;
         this.boss = boss;
+        this.moveNode = moveNode;
+        this.ai = ai;
     }
 
     //Flock알고리즘을 참고해서 포지션을 정하기 다만 자신과 주위만 영향을 끼쳐야 하며 전체적으로 영향을 줘선 안됨
@@ -24,9 +27,9 @@ public class FlockNode : MoveNode
             return Vector3.zero;
 
         Vector3 velocity = Vector3.zero;
-        if(Vector3.SqrMagnitude(flock.transform.position - boss.transform.position) > cohesion * cohesion)
+        if(Vector3.SqrMagnitude(ai.transform.position - boss.transform.position) > cohesion * cohesion)
         {
-            velocity = (boss.transform.position - flock.transform.position).normalized;
+            velocity = (boss.transform.position - ai.transform.position).normalized;
         }
 
         return velocity;
@@ -36,13 +39,13 @@ public class FlockNode : MoveNode
     //일단 할일이 없어서 오는 노드이기에 항상 작동중
     public override NodeState Evaluate()
     {
-        flock.SetColor(Color.cyan);
+        ai.SetColor(Color.cyan);
 
         Vector3 velocity = Vector3.zero;
         
         velocity += Cohesion();
 
-        Move(velocity);
+        moveNode.Move(velocity);
         
         return NodeState.RUNNING;
     }

@@ -21,8 +21,10 @@ public class Zombie : Enemy
 
         animator = GetComponent<Animator>();
 
+        MoveNode moveNode = new MoveNode(this, rotationSpeed);
+
         //상대를 쫓아가는 노드
-        ChaseNode chaseNode = new(GameManager.Instance.Players[0], colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+        ChaseNode chaseNode = new(GameManager.Instance.Players[0], this, moveNode);
         //상대의 거리가 쫓아가는 범위 안인지 체크하는 노드
         RangeNode chaseRangeNode = new(chaseRange, GameManager.Instance.Players[0].transform, transform);
         //시퀸스니까 거리 체크가 성공이면 쫓아가는 시퀸스
@@ -31,7 +33,7 @@ public class Zombie : Enemy
         //공격 거리를 체크하는 노드
         RangeNode attackRangeNode = new(attackInRnage, GameManager.Instance.Players[0].transform, transform);
         //공격하는 노드
-        AttackNode attackNode = new(this, GameManager.Instance.Players[0], rotationSpeed);
+        AttackNode attackNode = new(this, GameManager.Instance.Players[0], moveNode);
         //시퀸스니까 공격하는 범위 체크가 성공이면 공격하는 시퀸스
         BehaviorTreeSequence attackSequence = new(new List<BehaviorTreeNode> { attackRangeNode, attackNode });
 

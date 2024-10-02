@@ -2,75 +2,46 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MoveNode : BehaviorTreeNode
+public class MoveNode
 {
-    //자신들의 동료들과 보스의 영향을 받아 위치를 정해야 함
-    //동료들
-    protected readonly Transform[] colleague;
+    ////자신들의 동료들과 보스의 영향을 받아 위치를 정해야 함
+    ////동료들
+    //protected readonly Transform[] colleague;
     //자신
     protected readonly Enemy flock;
 
-    //가까워 지면 안되는 거리
-    protected readonly float avoidance;
+    ////가까워 지면 안되는 거리
+    //protected readonly float avoidance;
 
     protected readonly float rotationSpeed;
 
-    protected Vector3 desiredVelocity;
-    //현재 사용중이지 않은 변수
-    protected readonly float momentum;
+    //protected Vector3 desiredVelocity;
+    ////현재 사용중이지 않은 변수
+    //protected readonly float momentum;
 
-    protected readonly float power;
+    //protected readonly float power;
 
-    public MoveNode(Transform[] colleague, Enemy flock, float avoidance, float rotationSpeed, float momentum, float power)
+    public MoveNode(Enemy flock, float rotationSpeed)
     {
-        this.colleague = colleague;
         this.flock = flock;
-        this.avoidance = avoidance;
         this.rotationSpeed = rotationSpeed;
-        this.momentum = momentum;
-        this.power = power;
-    }
-
-    //최우선은 일단 동료와 겹치지 않는가
-    protected Vector3 Avoidance(ref float magnitude)
-    {
-        //참고할 동료가 없다면 움직임에 영향을 주지 않기 위해 zero 리턴
-        if (colleague == null || colleague.Length == 0)
-            return Vector3.zero;
-
-        Vector3 velocity = Vector3.zero;
-        foreach (var f in colleague)
-        {
-            if (f != flock)
-            {
-                magnitude = Vector3.Magnitude(flock.transform.position - f.transform.position);
-                magnitude /= avoidance;
-                if (magnitude < 1)
-                {
-                    velocity += (flock.transform.position - f.transform.position).normalized;
-                }
-            }
-        }
-
-        //애초에 로컬로 계산해서 방향과 크기만이 있음
-        return velocity.normalized;
     }
 
     //움직일 방향을 입력
-    protected void Move(Vector3 velocity, Player target = null)
+    public virtual void Move(Vector3 velocity, Player target = null)
     {
-        //인자로 전달받은 velocity가 얼마의 비율로 힘이 들어갈지
-        float mg = 1 ;
-        Vector3 avoid = Avoidance(ref mg);
-        velocity = velocity.normalized * mg;
-        //if(avoid == Vector3.zero)
-        //{
-            velocity += avoid * power;
-        //}
-        //else
-        //{
-        //    velocity = avoid;
-        //}
+        ////인자로 전달받은 velocity가 얼마의 비율로 힘이 들어갈지
+        //float mg = 1 ;
+        //Vector3 avoid = Avoidance(ref mg);
+        //velocity = velocity.normalized * mg;
+        ////if(avoid == Vector3.zero)
+        ////{
+        //    velocity += avoid * power;
+        ////}
+        ////else
+        ////{
+        ////    velocity = avoid;
+        ////}
 
         velocity.y = 0; // Y축 회전을 제거
         if (velocity != Vector3.zero)
@@ -91,13 +62,15 @@ public abstract class MoveNode : BehaviorTreeNode
         //desiredVelocity = velocity;
     }
 
-    protected void LookAtVelocity(Vector3 velocity)
+    //방향을 주면 전체를 회전
+    public void LookAtVelocity(Vector3 velocity)
     {
         Quaternion targetRotation = Quaternion.LookRotation(velocity);
         flock.transform.rotation = Quaternion.RotateTowards(flock.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    protected void LookAtTarget(Player target)
+    //타겟을 주면 전체를 회전
+    public void LookAtTarget(Player target)
     {
         if (flock == null || target == null)
             return;
@@ -112,7 +85,7 @@ public abstract class MoveNode : BehaviorTreeNode
     }
 
     //머리만 플레이어를 바라보도록, 몸은 가는 방향을 바라봐야 하니까
-    protected void LookAtTargetWithinAngle(Player target)
+    public void LookAtTargetWithinAngle(Player target)
     {
         if (flock.Head == null || target == null)
             return;

@@ -29,6 +29,9 @@ public abstract class Enemy : Unit
     public abstract Transform Head { get; }
     public abstract Transform Body { get; }
 
+
+    protected BehaviorTreeNode topNode;
+
     [SerializeField]
     protected float chaseRange;
     [SerializeField]
@@ -37,23 +40,7 @@ public abstract class Enemy : Unit
     protected float attackInRnage;
 
     [SerializeField]
-    protected Cover[] avaliableCovers;
-
-    protected Transform bestCoverSpot;
-
-    protected BehaviorTreeNode topNode;
-
-    //자신의 동료와 리더를 참조
-    [SerializeField]
-    protected Enemy[] colleague;
-    [SerializeField]
-    protected Enemy boss;
-
-    [SerializeField]
-    protected float power;
-    [SerializeField]
     protected float rotationSpeed;
-
     protected void Start()
     {
         autoMove = new(this, substances[0].transform);
@@ -92,16 +79,6 @@ public abstract class Enemy : Unit
     }
 
     protected abstract void Dead();
-
-    public void SetBestCoverSpot(Transform transform)
-    {
-        this.bestCoverSpot = transform;
-    }
-
-    public Transform GetBestCoverSpot()
-    {
-        return bestCoverSpot;
-    }
 
     public void SetColor(Color color)
     {
