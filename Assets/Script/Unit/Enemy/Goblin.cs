@@ -29,14 +29,20 @@ public class Goblin : Enemy , ICoveredEnemy, IFlockingEnemy
     public Enemy Boss => boss;
 
     [SerializeField]
-    protected float power;
+    protected float avoiddance = 3;
+    public float Avoidance => avoiddance;
+
+    [SerializeField]
+    protected float avoidPower = 1;
+    public float AvoidPower => avoidPower;
+
 
     // Start is called before the first frame update
     new void Start()
     {
         base.Start();
 
-        FlockingMoveNode flockingMoveNode = new FlockingMoveNode(colleague.Select(c => c.transform).ToArray(), this, 3, rotationSpeed, 0.5f, power);
+        FlockingMoveNode flockingMoveNode = new (this, rotationSpeed);
 
         //숨을 수 있는 곳 중에서 가장 좋은 자리를 찾는 노드
         IsCovereAvaliableNode coverAvaliableNode = new(avaliableCovers, GameManager.Instance.Players[0].transform, this);

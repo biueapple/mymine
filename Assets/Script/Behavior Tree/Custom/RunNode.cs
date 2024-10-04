@@ -17,19 +17,12 @@ public class RunNode : BehaviorTreeNode
 
     public override NodeState Evaluate()
     {
-        //ai.SetColor(Color.yellow);
-        float distance = Vector3.Distance(target.position, ai.transform.position);
-        if(distance > 0.2f)
-        {
-            Vector3 direction = ai.transform.position - target.position;
+        ai.SetColor(Color.yellow);
 
-            moveNode.Move(direction);
+        Vector3 direction = ai.transform.position - target.position;
 
-            return NodeState.RUNNING;
-        }
-        else
-        {
-            return NodeState.SUCCESS;
-        }
+        moveNode.Move(direction);
+
+        return NodeState.RUNNING;
     }
 }
