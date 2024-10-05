@@ -17,6 +17,7 @@ public class ShieldColleagueMoveNode : BehaviorTreeNode
         this.ai = ai;
         coveredEnemy = ai as ICoveredEnemy;
         this.moveNode = moveNode;
+        player = GameManager.Instance.Players[0];
     }
 
     public override NodeState Evaluate()

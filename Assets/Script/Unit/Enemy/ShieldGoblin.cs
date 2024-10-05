@@ -50,6 +50,11 @@ public class ShieldGoblin : Enemy, IFlockingEnemy
         //시퀸스니까 거리 체크가 성공이면 쫓아가는 시퀸스
         BehaviorTreeSequence chaseSequence = new(new List<BehaviorTreeNode> { chaseRangeNode, chaseNode });
 
+        //서로 응집
+        FlockNode flockNode = new(boss != null ? boss.transform : null, 3, flockingMoveNode, this);
+        //쫓아가는게 가능하면 쫓아가고 아니라면 서로 응집해
+        BehaviorTreeSelector chaseSelector = new(new List<BehaviorTreeNode> { chaseSequence, flockNode });
+
         //공격 거리를 체크하는 노드
         RangeNode attackRangeNode = new(attackInRnage, GameManager.Instance.Players[0].transform, transform);
         //공격하는 노드
@@ -58,7 +63,7 @@ public class ShieldGoblin : Enemy, IFlockingEnemy
         BehaviorTreeSequence attackSequence = new(new List<BehaviorTreeNode> { attackRangeNode, attackNode });
 
         //공격 시퀸스와 쫓기 시퀸스중에 성공하는거 실행함
-        topNode = new BehaviorTreeSelector(new List<BehaviorTreeNode> { attackSequence, chaseSequence });
+        topNode = new BehaviorTreeSelector(new List<BehaviorTreeNode> { attackSequence, chaseSelector });
     }
 
     // Update is called once per frame
